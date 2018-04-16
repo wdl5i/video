@@ -6,7 +6,9 @@ import com.monitor.video.vo.User;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,17 +23,23 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/login")
+    public String greetingForm(Model model) {
+        model.addAttribute("user", new User());
+        return "login";
+    }
+
     @PostMapping("/login")
-    @ResponseBody
-    public RestResult<User> handleLogin(@RequestParam("userName") String userName, @RequestParam("pwd") String password) {
+    public String handleLogin(@ModelAttribute User user, Model model) {
         RestResult<User> restResult;
-        User user = userService.login(userName, password);
+        user = userService.login(user.getUserName(), user.getPassword());
         if(user == null) {
             restResult = RestResult.buildErrorResult(RestResult.Status.NOT_EXIST_ERROR);
         } else {
             restResult = RestResult.buildSuccessResult(user);
         }
-        return restResult;
+        model.addAttribute("data", restResult);
+        return "login_result";
     }
 
 }
