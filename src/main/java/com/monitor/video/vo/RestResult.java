@@ -138,7 +138,8 @@ public class RestResult<T> {
         UNKOWN_ERROR("000600", "未知错误"),
 
         NOT_EXIST_ERROR("000700", "数据不存在"),
-        EXIST_ERROR("000800", "数据已经存在");
+        AUTH_ERROR("000800", "没有权限"),
+        EXIST_ERROR("000900", "数据已经存在");
 
         /**
          * 状态码,长度固定为6位的字符串.

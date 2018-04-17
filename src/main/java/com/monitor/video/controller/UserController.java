@@ -10,12 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * Created by donglin.wang on 2018/4/14.
  */
-@Controller
+@RestController
 @RequestMapping("/user")
 @MapperScan("com.monitor.video")
 public class UserController {
@@ -23,23 +25,16 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login")
-    public String greetingForm(Model model) {
-        model.addAttribute("user", new User());
-        return "login";
-    }
-
     @PostMapping("/login")
-    public String handleLogin(@ModelAttribute User user, Model model) {
+    public RestResult<User> handleLogin(@RequestParam String userName, @RequestParam String pwd) {
         RestResult<User> restResult;
-        user = userService.login(user.getUserName(), user.getPassword());
+        User user = userService.login(userName, pwd);
         if(user == null) {
             restResult = RestResult.buildErrorResult(RestResult.Status.NOT_EXIST_ERROR);
         } else {
             restResult = RestResult.buildSuccessResult(user);
         }
-        model.addAttribute("data", restResult);
-        return "login_result";
+        return restResult;
     }
 
 }
