@@ -124,16 +124,16 @@ public class RestResult<T> {
         /**
          * 错误状态
          */
-        ERROR("000100", "ERROR"),
+        ERROR("000100", "错误"),
         /**
          * 错误的请求,参数不正确,如果没有更精确的状态表示,使用此状态.
          */
-        BAD_REQUEST("000400", "Bad Request"),
+        BAD_REQUEST("000400", "参数不合法"),
 
         /**
          * 服务器内部错误,如果没有更精确的状态表示,使用此状态.
          */
-        INTERNAL_SERVER_ERROR("000500", "Internal Server Error"),
+        INTERNAL_SERVER_ERROR("000500", "服务器内部错误"),
 
         UNKOWN_ERROR("000600", "未知错误"),
 
