@@ -17,7 +17,7 @@
             <form>
                 <input type="text" name="userName"/><br/>
                 <input type="password" name="pwd"/><br/>
-                <input type="submit" value="登录" @click="login('/user/login')"><br/>
+                <input type="button" value="登录" @click="login('/user/login')"><br/>
             </form>
         </div>
     </template>
@@ -26,8 +26,11 @@
     <template id="home">
         <div>
             <p>首页</p>
-            <p>恭喜你，登陆成功</p>
-            
+            <p>恭喜你,登陆成功</p>
+            <div>
+                <p>这里是用户管理的router-view</p>
+                <router-view></router-view>
+            </div>
         </div>
     </template>
 
