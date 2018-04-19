@@ -18,8 +18,8 @@ public  class AbstractController<T> {
         this.service = service;
     }
 
-    public RestResult addOrUpdate(@RequestParam("entity") T entity) {
-        return service.addOrUpdate(entity);
+    public RestResult addOrUpdate(@RequestParam("pojo") T pojo) {
+        return service.addOrUpdate(pojo);
     }
 
     @DeleteMapping("/{id}")
@@ -32,7 +32,7 @@ public  class AbstractController<T> {
         return service.findById(id);
     }
 
-    public RestResult<List<User>> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, @RequestParam("user") User user) {
-        return service.page(pageNum, pageSize, user);
+    public RestResult<List<User>> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, @RequestParam("pojo") T pojo) {
+        return service.page(pageNum, pageSize, pojo);
     }
 }
