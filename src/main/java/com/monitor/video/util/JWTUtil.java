@@ -2,8 +2,10 @@ package com.monitor.video.util;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 import io.jsonwebtoken.*;
 import org.apache.tomcat.util.codec.binary.Base64;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +18,11 @@ public class JWTUtil {
      * 创建jwt
      *
      * @param id
-     * @param subject
      * @param ttlMillis 过期的时间长度
      * @return
      * @throws Exception
      */
-    public static String createJWT(String id, String subject, Map<String, Object> claims, long ttlMillis) throws Exception {
+    public static String createJWT(String id, Map<String, Object> claims, long ttlMillis) throws Exception {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256; //指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
         long nowMillis = System.currentTimeMillis();//生成JWT的时间
         Date now = new Date(nowMillis);
@@ -72,7 +73,7 @@ public class JWTUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("user", "admin");
         claims.put("role", "manager");
-        String jwtStr = createJWT("jwt", "123", claims, 60000);
+        String jwtStr = createJWT("jwt", claims, 60000);
         Claims c = parseJWT(jwtStr);//注意：如果jwt已经过期了，这里会抛出jwt过期异常。
         System.out.println(c);
     }

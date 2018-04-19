@@ -1,19 +1,48 @@
 package com.monitor.video.service;
 
 import com.monitor.video.dao.UserDao;
+import com.monitor.video.util.JWTUtil;
+import com.monitor.video.vo.RestResult;
 import com.monitor.video.vo.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class UserService {
+public class UserService extends AbstractService{
 
-    @Autowired
+    private Logger logger = LoggerFactory.getLogger(UserService.class);
+
     private UserDao userDao;
 
-    public User login(String userName, String password) {
-        User user = userDao.login(userName, password);
-        return user;
+    @Autowired
+    protected void setDao(UserDao dao) {
+        this.userDao = dao;
+        super.setDao(dao);
     }
+
+    public RestResult<String> login(String userName, String password) {
+        RestResult<String> restResult;
+        User user = userDao.login(userName, password);
+        if(user == null) {
+            restResult = RestResult.buildErrorResult(RestResult.Status.NOT_EXIST_ERROR);
+        } else {
+            Map<String, Object> claims = new HashMap<>();
+            String claimsStr = "";
+            claims.put("user", userName);
+            try {
+                claimsStr = JWTUtil.createJWT("jwt", claims, 60000);
+            } catch (Exception e) {
+
+            }
+            restResult = RestResult.buildSuccessResult(claimsStr);
+        }
+        return restResult;
+    }
+
+
 
 }
