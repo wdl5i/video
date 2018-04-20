@@ -20,12 +20,12 @@ public  class AbstractController<T> {
 
     @PostMapping
     public RestResult add(@RequestParam("pojo") T pojo) {
-        return service.addOrUpdate(pojo);
+        return service.add(pojo);
     }
 
     @PutMapping
     public RestResult update(@RequestParam("pojo") T pojo) {
-        return service.addOrUpdate(pojo);
+        return service.update(pojo);
     }
 
     @DeleteMapping("/{id}")
