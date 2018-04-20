@@ -21,10 +21,22 @@ public abstract class AbstractService<T> {
         this.dao = dao;
     }
 
-    public RestResult addOrUpdate(T entity){
+    public RestResult add(T entity) {
         RestResult restResult = null;
         try {
-            //dao.addOrUpdate(entity);
+            dao.insert(entity);
+            restResult = RestResult.buildSuccessResult();
+        } catch (Exception e) {
+            restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
+            logger.error(e.getMessage(), e);
+        }
+        return restResult;
+    }
+
+    public RestResult update(T entity){
+        RestResult restResult = null;
+        try {
+            dao.updateByPrimaryKey(entity);
             restResult = RestResult.buildSuccessResult();
         } catch (Exception e) {
             restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
