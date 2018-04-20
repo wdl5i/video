@@ -22,7 +22,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
+        System.out.println("preHandler:" + request.getRequestURI());
         boolean validate;
         validate = validateMethod(handler);
         if(validate) {

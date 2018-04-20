@@ -18,7 +18,13 @@ public  class AbstractController<T> {
         this.service = service;
     }
 
-    public RestResult addOrUpdate(@RequestParam("pojo") T pojo) {
+    @PostMapping
+    public RestResult add(@RequestParam("pojo") T pojo) {
+        return service.addOrUpdate(pojo);
+    }
+
+    @PutMapping
+    public RestResult update(@RequestParam("pojo") T pojo) {
         return service.addOrUpdate(pojo);
     }
 

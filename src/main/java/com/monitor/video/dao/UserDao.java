@@ -1,17 +1,16 @@
 package com.monitor.video.dao;
 
 import com.monitor.video.vo.User;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
 /**
  * Created by fangzhipeng on 2017/4/20.
  */
-@Mapper
-public interface UserDao extends BaseDao{
+public interface UserDao extends Mapper<User> {
 
-   User login(@Param("userName") String userName, @Param("pwd") String password);
+   User login(@Param("name") String name, @Param("pwd") String password);
 
 }
