@@ -18,7 +18,7 @@ var Login = {
             let psd = $("input[name='pwd']").val();
             let params = {
                 userName:user,
-                pwd:psd
+                password:psd
             }
             vm.getData(url,'POST',params,function(data){
                 console.log(data);
