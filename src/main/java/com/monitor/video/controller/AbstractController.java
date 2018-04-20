@@ -1,6 +1,7 @@
 package com.monitor.video.controller;
 
 import com.monitor.video.service.AbstractService;
+import com.monitor.video.vo.Page;
 import com.monitor.video.vo.RestResult;
 import com.monitor.video.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public  class AbstractController<T> {
     }
 
     @GetMapping("/page")
-    public RestResult<List<T>> page(@RequestParam(defaultValue = "-1", name = "pageNum") int pageNum, @RequestParam(defaultValue = "-1", name = "pageSize") int pageSize, @RequestParam(required = false, name = "pojo") T pojo) {
+    public RestResult<Page<T>> page(@RequestParam(defaultValue = "-1", name = "pageNum") int pageNum, @RequestParam(defaultValue = "-1", name = "pageSize") int pageSize, @RequestParam(required = false, name = "pojo") T pojo) {
         return service.page(pageNum, pageSize, pojo);
     }
 }
