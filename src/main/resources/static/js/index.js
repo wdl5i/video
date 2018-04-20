@@ -55,8 +55,8 @@ var Home = {
             console.log("this",this)
             let getUserUrl = '/user/page';
             let params = {
-                pageNum:pageNum,
-                pageSize:pageSize
+                pageNum:parseInt(pageNum),
+                pageSize:parseInt(pageSize)
             };
             vm.getData(getUserUrl,'GET',params,function(data){
                 console.log(data);
