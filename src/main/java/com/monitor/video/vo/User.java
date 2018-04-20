@@ -1,15 +1,10 @@
 package com.monitor.video.vo;
 
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table(name = "user")
-public class User{
+public class User extends BaseEntity{
 
-    @Id
-    private int id;
-    private String name;
-    private int status;
 
     private String password;
     private String sex;
@@ -39,29 +34,7 @@ public class User{
         this.phone = phone;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 
     //
 //    @Override
