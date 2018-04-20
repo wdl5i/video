@@ -62,7 +62,7 @@ var Home = {
                 console.log(data);
             },function(err){
                 console.log(err);
-            },"auth",this.token)
+            },{'auth':this.token})
         },
         userAdd:function(){
             let addUrl = ''
@@ -73,7 +73,7 @@ var Home = {
                 console.log(data);
             },function(err){
                 console.log(err);
-            },"auth",Home.userInfo.token)
+            },{'auth':this.token})
         }
     },
 }
@@ -116,15 +116,13 @@ var vm = new Vue({
     },
     methods:{
         //获取数据的统一函数
-        getData: function (url, method, param, doneHandler, failHandler, headerKey, headerValue) {
+        getData: function (url, method, param, doneHandler, failHandler, headerObj) {
             if (url) {
                 $.ajax({
                     url: url,
                     type: method || "GET",
                     data: param || "",
-                    headers:{
-                        headerKey:headerValue
-                    }
+                    headers:headerObj
                 }).done(function (data) {
                     if (doneHandler) {
                         doneHandler(data);
