@@ -22,10 +22,13 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        System.out.println("preHandler:" + request.getRequestURI());
+
+        logger.info("preHandler:" + request.getRequestURI());
         boolean validate;
         validate = validateMethod(handler);
         if(validate) {
+            return true;
+        } else {
             String auth = request.getHeader("auth");
             validate = validateClaims(auth);
             if(validate)
@@ -77,7 +80,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                 logger.error(e.getMessage(), e);
             }
             if (claims != null) {
-
+                return true;
             }
         }
         return false;

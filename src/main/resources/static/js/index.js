@@ -15,7 +15,7 @@ var Login = {
     methods:{
         login:function(url){
             let user = $("input[name='userName']").val();
-            let psd = $("input[name='pwd']").val();
+            let psd = $("input[name='password']").val();
             let params = {
                 userName:user,
                 password:psd
