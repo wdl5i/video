@@ -12,9 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class UserService extends AbstractService{
+public class UserService extends AbstractService {
 
     private Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    private static final long ONE_HOUR_MILLS = 60 * 60 * 1000;
 
     private UserDao userDao;
 
@@ -34,7 +36,7 @@ public class UserService extends AbstractService{
             String claimsStr = "";
             claims.put("user", userName);
             try {
-                claimsStr = JWTUtil.createJWT("jwt", claims, 60000);
+                claimsStr = JWTUtil.createJWT("jwt", claims, ONE_HOUR_MILLS);
             } catch (Exception e) {
 
             }

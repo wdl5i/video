@@ -2,6 +2,7 @@ package com.monitor.video.service;
 
 import com.monitor.video.vo.RestResult;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tk.mybatis.mapper.common.Mapper;
@@ -57,8 +58,12 @@ public abstract class AbstractService<T> {
     public RestResult<List<T>> page(@Param("pageNum") int pageNum, @Param("pageSize") int pageSize, @Param("entity") T entity) {
         RestResult restResult = null;
         try {
-            //List<T> users = dao.page(pageNum, pageSize, entity);
-            restResult = RestResult.buildSuccessResult(null);
+            int offset = 0;
+            if(pageNum > 1) {
+                offset = (pageNum - 1)  * pageSize;
+            }
+            List<T> users = dao.selectByRowBounds(entity, new RowBounds(offset, pageSize));
+            restResult = RestResult.buildSuccessResult(users);
         } catch (Exception e) {
             restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
             logger.error(e.getMessage(), e);

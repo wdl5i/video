@@ -24,8 +24,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             throws Exception {
 
         logger.info("preHandler:" + request.getRequestURI());
-        boolean validate;
-        validate = validateMethod(handler);
+        boolean validate = validateMethod(handler);
         if(validate) {
             return true;
         } else {
