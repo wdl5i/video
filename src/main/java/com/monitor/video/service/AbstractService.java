@@ -2,7 +2,6 @@ package com.monitor.video.service;
 
 import com.monitor.video.vo.Page;
 import com.monitor.video.vo.RestResult;
-import com.monitor.video.vo.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
@@ -22,7 +21,7 @@ public abstract class AbstractService<T> {
     }
 
     public RestResult add(T entity) {
-        RestResult restResult = null;
+        RestResult restResult;
         try {
             dao.insert(entity);
             restResult = RestResult.buildSuccessResult();
@@ -34,7 +33,7 @@ public abstract class AbstractService<T> {
     }
 
     public RestResult update(T entity){
-        RestResult restResult = null;
+        RestResult restResult;
         try {
             dao.updateByPrimaryKey(entity);
             restResult = RestResult.buildSuccessResult();
@@ -46,9 +45,9 @@ public abstract class AbstractService<T> {
     }
 
     public RestResult delete(int id) {
-        RestResult restResult = null;
+        RestResult restResult;
         try {
-            //dao.delete(id);
+            dao.deleteByPrimaryKey(id);
             restResult = RestResult.buildSuccessResult();
         } catch (Exception e) {
             restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
@@ -58,7 +57,7 @@ public abstract class AbstractService<T> {
     }
 
     public RestResult<T> findById(int id) {
-        RestResult restResult = null;
+        RestResult restResult;
         try {
             T entity = dao.selectByPrimaryKey(id);
             restResult = RestResult.buildSuccessResult(entity);
@@ -70,7 +69,7 @@ public abstract class AbstractService<T> {
     }
 
     public RestResult<Page<T>> page(@Param("pageNum") int pageNum, @Param("pageSize") int pageSize, @Param("entity") T entity) {
-        RestResult<Page<T>> restResult = null;
+        RestResult<Page<T>> restResult;
         try {
             List<T> users = dao.selectByRowBounds(entity, new RowBounds(Page.calcuOffset(pageNum, pageSize), pageSize));
             int count = dao.selectCount(entity);
@@ -81,6 +80,5 @@ public abstract class AbstractService<T> {
             logger.error(e.getMessage(), e);
         }
         return restResult;
-
     }
 }

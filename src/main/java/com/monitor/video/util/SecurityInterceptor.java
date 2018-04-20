@@ -24,12 +24,14 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             throws Exception {
 
         logger.info("preHandler:" + request.getRequestURI());
-        boolean validate = validateMethod(handler);
-        if(validate) {
-            return true;
+        boolean validate = false;
+        Authority authority = validateAuthType(handler);
+        if(authority.value() == AuthorityType.NO_VALIDATE) {
+            validate = true;
+            return validate;
         } else {
             String auth = request.getHeader("auth");
-            validate = validateClaims(auth);
+            validate = validateClaims(auth, authority);
             if(validate)
                 return true;
         }
@@ -42,34 +44,29 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         return false;
     }
 
-    private boolean validateMethod(Object handler)  {
+    private Authority validateAuthType(Object handler)  {
+        Authority authority = null;
         HandlerMethod hm = (HandlerMethod) handler;
-
         Class<?> clazz = hm.getBeanType();
         Method m = hm.getMethod();
         try {
             if (clazz != null && m != null) {
                 boolean isClzAnnotation = clazz.isAnnotationPresent(Authority.class);
                 boolean isMethodAnnotation = m.isAnnotationPresent(Authority.class);
-                Authority authority = null;
                 // 如果方法和类声明中同时存在这个注解，那么方法中的会覆盖类中的设定。
                 if (isMethodAnnotation) {
                     authority = m.getAnnotation(Authority.class);
                 } else if (isClzAnnotation) {
                     authority = clazz.getAnnotation(Authority.class);
                 }
-                if (authority != null && AuthorityType.NO_VALIDATE == authority.value()) {
-                    // 标记为不验证,放行
-                    return true;
-                }
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return false;
+        return authority;
     }
 
-    private boolean validateClaims(String auth) {
+    private boolean validateClaims(String auth, Authority authority) {
 
         if (!StringUtils.isEmpty(auth)) {
             Claims claims = null;
@@ -79,7 +76,12 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                 logger.error(e.getMessage(), e);
             }
             if (claims != null) {
-                return true;
+                if(authority.value() == AuthorityType.ADMIN && claims.get("user").toString().equals("admin"))
+                    return true;
+                else {
+                    //TODO 需要验证权限
+                    return true;
+                }
             }
         }
         return false;

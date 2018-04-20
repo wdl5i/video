@@ -8,4 +8,7 @@ public enum AuthorityType {
     // 不验证
     NO_VALIDATE,
 
+    //admin用户可用
+    ADMIN;
+
 }

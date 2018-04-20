@@ -4,6 +4,9 @@ package com.monitor.video.vo;
 import javax.persistence.Id;
 
 public class BaseEntity {
+    public static final int STATUS_OK = 1;
+    public static final int STATUS_DEL = 0;
+
 
     @Id
     private int id;
