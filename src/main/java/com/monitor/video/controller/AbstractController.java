@@ -34,12 +34,12 @@ public  class AbstractController<T> {
     }
 
     @GetMapping("/{id}")
-    public RestResult<User> findById(@PathVariable("id") int id) {
+    public RestResult<T> findById(@PathVariable("id") int id) {
         return service.findById(id);
     }
 
     @GetMapping("/page")
-    public RestResult<List<User>> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, @RequestParam(required = false, name = "pojo") T pojo) {
+    public RestResult<List<T>> page(@RequestParam(defaultValue = "-1", name = "pageNum") int pageNum, @RequestParam(defaultValue = "-1", name = "pageSize") int pageSize, @RequestParam(required = false, name = "pojo") T pojo) {
         return service.page(pageNum, pageSize, pojo);
     }
 }

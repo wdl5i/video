@@ -2,7 +2,6 @@ package com.monitor.video.service;
 
 import com.monitor.video.vo.Page;
 import com.monitor.video.vo.RestResult;
-import com.monitor.video.vo.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;

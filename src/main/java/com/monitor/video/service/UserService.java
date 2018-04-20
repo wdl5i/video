@@ -14,7 +14,7 @@ import java.util.Map;
 @Service
 public class UserService extends AbstractService {
 
-    private Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private static final long ONE_HOUR_MILLS = 60 * 60 * 1000;
 
@@ -38,7 +38,7 @@ public class UserService extends AbstractService {
             try {
                 claimsStr = JWTUtil.createJWT("jwt", claims, ONE_HOUR_MILLS);
             } catch (Exception e) {
-
+                logger.error(e.getMessage(), e);
             }
             restResult = RestResult.buildSuccessResult(claimsStr);
         }
