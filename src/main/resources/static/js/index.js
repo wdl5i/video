@@ -32,7 +32,7 @@ var Login = {
                 }
             },function(err){
                 console.log(err);
-            })
+            },'','')
         }
     },
 }
@@ -122,9 +122,9 @@ var vm = new Vue({
                     url: url,
                     type: method || "GET",
                     data: param || "",
-                    beforeSend: function(xhr){
-                        xhr.setRequestHeader( headerKey || "" , headerValue || "");
-                    },
+                    headers:{
+                        headerKey:headerValue
+                    }
                 }).done(function (data) {
                     if (doneHandler) {
                         doneHandler(data);
