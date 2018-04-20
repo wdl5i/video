@@ -40,10 +40,13 @@ var Home = {
     template: '#home',
     data:function(){
         let userInfo = {};
-        let userList = [];
+        let userList = [{
+            name:'huangx'
+        }];
         userInfo.token = JSON.parse(localStorage.getItem("userInfo")); //取出登录用户信息
-        if(userInfo == {} || userInfo == null){
+        if(userInfo.token == null){
             console.log('not login');
+            router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
         }else{
             console.log('user',userInfo);
         };
@@ -55,34 +58,40 @@ var Home = {
     methods:{
         //用户增删改查
         getUserList:function(pageNum, pageSize){
-            console.log("this",this)
+            // console.log("this",this);
+            let _this = this;
             let getUserUrl = '/user/page';
             let params = {
                 pageNum:parseInt(pageNum),
                 pageSize:parseInt(pageSize),
             };
-            vm.getData(getUserUrl,'GET',params,function(data){
+            vm.getData(getUserUrl,'GET',params, function(data){
                 console.log(data);
                 if(data.content){
-                    this.userList = data.content
-                    console.log("user data",this.userList);
+                    _this.userList = data.content.list;
+                    // console.log("user data",this.userList);
                 }else{
                     console.log("no user data");
                 }
             },function(err){
                 console.log(err);
-            },{'auth':this.token})
+            },{'auth':this.userInfo.token})
         },
         userAdd:function(){
-            let addUrl = ''
+            let addUrl = '/user'
             let params = {
-
+                pojo:{
+                    name:$("input[name='addName']").val(),
+                    password:$("input[name='addPsd']").val(),
+                    sex:$("input[name='sex']").val(),
+                    phone:$("input[name='phone']").val()
+                }
             }
             vm.getData(addUrl,'POST',params,function(data){
                 console.log(data);
             },function(err){
                 console.log(err);
-            },{'auth':this.token})
+            },{'auth':this.userInfo.token})
         }
     },
 }

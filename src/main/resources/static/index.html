@@ -31,10 +31,16 @@
                 <p>这里是用户管理的router-view</p>
                 <button @click="getUserList(1,20)">获取用户列表</button>
                 <ul>
-                    <!-- <li v-for="(users,usersIndex) in userList">
+                    <li v-for="(users,usersIndex) in userList">
                         {{users.name}}
-                    </li> -->
+                    </li>
                 </ul>
+                <input type="text" name="addName" /><br/>
+                <input type="text" name="addPsd" value="123456"/><br/>
+                <input type="radio" name="sex" value="男" id="male" checked/><label for="male">男</label><br/>
+                <input type="radio" name="sex" value="女" id="famale"/><label for="famale">女</label><br/>
+                <input type="text" name="phone" /><br/>
+                <button @click="userAdd()">添加用户</button>
                 <router-view>
                     
                 </router-view>
