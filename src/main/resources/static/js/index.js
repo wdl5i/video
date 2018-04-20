@@ -39,7 +39,8 @@ var Login = {
 var Home = {
     template: '#home',
     data:function(){
-        let userInfo = JSON.parse(localStorage.getItem("userInfo")); //取出登录用户信息
+        let userInfo = {}
+        userInfo.token = JSON.parse(localStorage.getItem("userInfo")); //取出登录用户信息
         if(userInfo == {} || userInfo == null){
             console.log('not login');
 
@@ -47,7 +48,34 @@ var Home = {
             console.log('user',userInfo);
             return userInfo;
         }
-    }
+    },
+    methods:{
+        //用户增删改查
+        getUserList:function(pageNum, pageSize){
+            console.log("this",this)
+            let getUserUrl = '/user/page';
+            let params = {
+                pageNum:pageNum,
+                pageSize:pageSize
+            };
+            vm.getData(getUserUrl,'GET',params,function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },"auth",this.token)
+        },
+        userAdd:function(){
+            let addUrl = ''
+            let params = {
+
+            }
+            vm.getData(addUrl,'POST',params,function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },"auth",Home.userInfo.token)
+        }
+    },
 }
 var userManage = {
     template: '#userManage'
@@ -88,12 +116,15 @@ var vm = new Vue({
     },
     methods:{
         //获取数据的统一函数
-        getData: function (url, method, param, doneHandler, failHandler) {
+        getData: function (url, method, param, doneHandler, failHandler, headerKey, headerValue) {
             if (url) {
                 $.ajax({
                     url: url,
                     type: method || "GET",
                     data: param || "",
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader( headerKey || "" , headerValue || "");
+                    },
                 }).done(function (data) {
                     if (doneHandler) {
                         doneHandler(data);

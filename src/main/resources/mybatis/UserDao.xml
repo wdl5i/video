@@ -5,7 +5,7 @@
 
 
     <select id="login" resultType="com.monitor.video.vo.User">
-        SELECT * FROM user where user_name = #{userName} and password = #{pwd}
+        SELECT * FROM user where name = #{userName} and password = #{pwd}
     </select>
 
     <select id="findById" resultType="com.monitor.video.vo.User">

@@ -32,6 +32,7 @@ public  class AbstractController<T> {
         return service.findById(id);
     }
 
+    @GetMapping("/page")
     public RestResult<List<User>> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, @RequestParam("pojo") T pojo) {
         return service.page(pageNum, pageSize, pojo);
     }
