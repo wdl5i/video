@@ -30,8 +30,14 @@
             <div>
                 <p>这里是用户管理的router-view</p>
                 <button @click="getUserList(1,20)">获取用户列表</button>
-
-                <router-view></router-view>
+                <ul>
+                    <!-- <li v-for="(users,usersIndex) in userList">
+                        {{users.name}}
+                    </li> -->
+                </ul>
+                <router-view>
+                    
+                </router-view>
             </div>
         </div>
     </template>
