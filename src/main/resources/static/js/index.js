@@ -24,7 +24,9 @@ var Login = {
                 console.log(data);
                 if(data.message == 'OK'){
                     console.log('登录成功');
-                    router.push({path:'/home'});
+                    router.push({path:'/home'}); //登录成功跳转至主页
+                    //设置用户信息的本地存储
+                    localStorage.setItem("userInfo",JSON.stringify(data.content));
                 }else{
                     console.log('用户不存在');
                 }
@@ -35,14 +37,70 @@ var Login = {
     },
 }
 var Home = {
-    template: '#home'
+    template: '#home',
+    data:function(){
+        let userInfo = {}
+        userInfo.token = JSON.parse(localStorage.getItem("userInfo")); //取出登录用户信息
+        if(userInfo == {} || userInfo == null){
+            console.log('not login');
+
+        }else{
+            console.log('user',userInfo);
+            return userInfo;
+        }
+    },
+    methods:{
+        //用户增删改查
+        getUserList:function(pageNum, pageSize){
+            console.log("this",this)
+            let getUserUrl = '/user/page';
+            let params = {
+                pageNum:pageNum,
+                pageSize:pageSize
+            };
+            vm.getData(getUserUrl,'GET',params,function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },"auth",this.token)
+        },
+        userAdd:function(){
+            let addUrl = ''
+            let params = {
+
+            }
+            vm.getData(addUrl,'POST',params,function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },"auth",Home.userInfo.token)
+        }
+    },
+}
+var userManage = {
+    template: '#userManage'
 }
 
 /* 定义路由 */
 var routes = [
-    {path:"/login",component:Login},
-    {path:"/home",component:Home},
-    {path:"/",redirect:'/login'}
+    {
+        path:"/login",
+        component:Login
+    },
+    {
+        path:"/home",
+        component:Home,
+        chidren:[
+            {
+                path:'userManage',
+                component:userManage
+            }
+        ]
+    },
+    {
+        path:"/",
+        redirect:'/login'
+    }
 ]
 
 /* 创建路由器 */
@@ -58,12 +116,15 @@ var vm = new Vue({
     },
     methods:{
         //获取数据的统一函数
-        getData: function (url, method, param, doneHandler, failHandler) {
+        getData: function (url, method, param, doneHandler, failHandler, headerKey, headerValue) {
             if (url) {
                 $.ajax({
                     url: url,
                     type: method || "GET",
                     data: param || "",
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader( headerKey || "" , headerValue || "");
+                    },
                 }).done(function (data) {
                     if (doneHandler) {
                         doneHandler(data);

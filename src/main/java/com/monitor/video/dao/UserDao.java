@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface UserDao extends Mapper<User> {
 
-   User login(@Param("name") String userName, @Param("pwd") String password);
+   User login(@Param("name") String name, @Param("pwd") String password);
 
 }
