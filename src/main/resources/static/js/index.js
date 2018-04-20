@@ -39,14 +39,17 @@ var Login = {
 var Home = {
     template: '#home',
     data:function(){
-        let userInfo = {}
+        let userInfo = {};
+        let userList = [];
         userInfo.token = JSON.parse(localStorage.getItem("userInfo")); //取出登录用户信息
         if(userInfo == {} || userInfo == null){
             console.log('not login');
-
         }else{
             console.log('user',userInfo);
-            return userInfo;
+        };
+        return {
+            userInfo:userInfo,
+            userList:userList
         }
     },
     methods:{
@@ -56,10 +59,16 @@ var Home = {
             let getUserUrl = '/user/page';
             let params = {
                 pageNum:parseInt(pageNum),
-                pageSize:parseInt(pageSize)
+                pageSize:parseInt(pageSize),
             };
             vm.getData(getUserUrl,'GET',params,function(data){
                 console.log(data);
+                if(data.content){
+                    this.userList = data.content
+                    console.log("user data",this.userList);
+                }else{
+                    console.log("no user data");
+                }
             },function(err){
                 console.log(err);
             },{'auth':this.token})
@@ -112,7 +121,7 @@ var router = new VueRouter({
 var vm = new Vue({
     router,
     data:{
-
+        
     },
     methods:{
         //获取数据的统一函数
