@@ -1,6 +1,8 @@
 package com.monitor.video.service;
 
+import com.monitor.video.vo.Page;
 import com.monitor.video.vo.RestResult;
+import com.monitor.video.vo.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
@@ -55,15 +57,13 @@ public abstract class AbstractService<T> {
         return restResult;
     }
 
-    public RestResult<List<T>> page(@Param("pageNum") int pageNum, @Param("pageSize") int pageSize, @Param("entity") T entity) {
-        RestResult restResult = null;
+    public RestResult<Page<T>> page(@Param("pageNum") int pageNum, @Param("pageSize") int pageSize, @Param("entity") T entity) {
+        RestResult<Page<T>> restResult = null;
         try {
-            int offset = 0;
-            if(pageNum > 1) {
-                offset = (pageNum - 1)  * pageSize;
-            }
-            List<T> users = dao.selectByRowBounds(entity, new RowBounds(offset, pageSize));
-            restResult = RestResult.buildSuccessResult(users);
+            List<T> users = dao.selectByRowBounds(entity, new RowBounds(Page.calcuOffset(pageNum, pageSize), pageSize));
+            int count = dao.selectCount(entity);
+            Page<T> page = new Page<T>(pageNum, pageSize, count, users);
+            restResult = RestResult.buildSuccessResult(page);
         } catch (Exception e) {
             restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
             logger.error(e.getMessage(), e);
