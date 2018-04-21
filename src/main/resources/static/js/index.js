@@ -80,12 +80,10 @@ var Home = {
         userAdd:function(){
             let addUrl = '/user'
             let params = {
-                pojo:{
-                    name:$("input[name='addName']").val(),
-                    password:$("input[name='addPsd']").val(),
-                    sex:$("input[name='sex']").val(),
-                    phone:$("input[name='phone']").val()
-                }
+                "name":$("input[name='addName']").val(),
+                "password":$("input[name='addPsd']").val(),
+                "sex":$("input[name='sex']").val(),
+                "phone":$("input[name='phone']").val()
             }
             vm.getData(addUrl,'POST',params,function(data){
                 console.log(data);

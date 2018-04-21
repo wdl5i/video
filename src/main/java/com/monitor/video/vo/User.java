@@ -8,7 +8,7 @@ public class User extends BaseEntity{
 
     private String password;
     private String sex;
-    private int phone;
+    private String phone;
 
     public String getPassword() {
         return password;
@@ -26,11 +26,11 @@ public class User extends BaseEntity{
         this.sex = sex;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

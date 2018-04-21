@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tk.mybatis.mapper.common.Mapper;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractService<T> {
 
@@ -23,7 +25,7 @@ public abstract class AbstractService<T> {
     public RestResult add(T entity) {
         RestResult restResult;
         try {
-            dao.insert(entity);
+            dao.insertSelective(entity);
             restResult = RestResult.buildSuccessResult();
         } catch (Exception e) {
             restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
