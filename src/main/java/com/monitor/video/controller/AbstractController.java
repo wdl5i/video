@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/",produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+@RequestMapping(value = "/",
+                produces = "application/json;charset=UTF-8",
+                consumes = "application/json;charset=UTF-8"
+)
 public  class AbstractController<T> {
 
     protected AbstractService service;
@@ -41,8 +44,10 @@ public  class AbstractController<T> {
         return service.findById(id);
     }
 
-    @GetMapping("/page")
-    public RestResult<Page<T>> page(@RequestParam(defaultValue = "-1", name = "pageNum") int pageNum, @RequestParam(defaultValue = "-1", name = "pageSize") int pageSize, @RequestParam(required = false, name = "pojo") T pojo) {
+    @PostMapping("/page")
+    public RestResult<Page<T>> page(@RequestParam(required = false, defaultValue = "-1", name = "pageNum") int pageNum,
+                                    @RequestParam(required = false, defaultValue = "-1", name = "pageSize") int pageSize,
+                                    @RequestBody T pojo) {
         return service.page(pageNum, pageSize, pojo);
     }
 }

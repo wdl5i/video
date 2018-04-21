@@ -30,7 +30,7 @@ public class UserService extends AbstractService {
         RestResult<String> restResult;
         User user = userDao.login(userName, password);
         if(user == null) {
-            restResult = RestResult.buildErrorResult(RestResult.Status.NOT_EXIST_ERROR);
+            restResult = RestResult.buildErrorResult(RestResult.Status.NOT_FOUND);
         } else {
             Map<String, Object> claims = new HashMap<>();
             String claimsStr = "";
