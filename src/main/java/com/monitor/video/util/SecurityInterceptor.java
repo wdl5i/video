@@ -26,7 +26,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         logger.info("preHandler:" + request.getRequestURI());
         boolean validate = false;
         Authority authority = validateAuthType(handler);
-        if(authority.value() == AuthorityType.NO_VALIDATE) {
+        if(authority != null && authority.value() == AuthorityType.NO_VALIDATE) {
             validate = true;
             return validate;
         } else {
@@ -76,7 +76,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                 logger.error(e.getMessage(), e);
             }
             if (claims != null) {
-                if(authority.value() == AuthorityType.ADMIN && claims.get("user").toString().equals("admin"))
+                if(authority != null && authority.value() == AuthorityType.ADMIN && claims.get("user").toString().equals("admin"))
                     return true;
                 else {
                     //TODO 需要验证权限

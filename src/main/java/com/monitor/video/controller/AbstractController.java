@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping(value = "/",produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
 public  class AbstractController<T> {
 
     protected AbstractService service;
@@ -20,7 +20,7 @@ public  class AbstractController<T> {
     }
 
     @PostMapping
-    public RestResult add(@RequestParam("pojo") T pojo) {
+    public RestResult add(@RequestBody T pojo) {
         return service.add(pojo);
     }
 
