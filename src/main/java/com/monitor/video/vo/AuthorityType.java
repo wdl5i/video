@@ -11,4 +11,8 @@ public enum AuthorityType {
     //admin用户可用
     ADMIN;
 
+    public static boolean requireAdmin(Authority authority) {
+        return authority != null && authority.value() == AuthorityType.ADMIN;
+    }
+
 }

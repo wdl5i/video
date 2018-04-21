@@ -78,7 +78,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             }
             if (claims != null) {
                 String userName = claims.get("user").toString();
-                if(authority != null && authority.value() == AuthorityType.ADMIN && User.isAdmin(userName))
+                if(AuthorityType.requireAdmin(authority) && User.isAdmin(userName))
                     return true;
                 else {
                     //TODO 需要验证权限
