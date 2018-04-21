@@ -1,5 +1,7 @@
 package com.monitor.video.vo;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.Table;
 
 @Table(name = "user")
@@ -35,35 +37,8 @@ public class User extends BaseEntity{
     }
 
 
+    public static boolean isAdmin(String userName) {
+        return StringUtils.isNotEmpty(userName) && userName.equals("admin");
+    }
 
-    //
-//    @Override
-//    public int getId() {
-//        return id;
-//    }
-//
-//    @Override
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-//
-//    @Override
-//    public String getName() {
-//        return name;
-//    }
-//
-//    @Override
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    @Override
-//    public int getStatus() {
-//        return status;
-//    }
-//
-//    @Override
-//    public void setStatus(int status) {
-//        this.status = status;
-//    }
 }

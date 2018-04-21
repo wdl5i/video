@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monitor.video.vo.Authority;
 import com.monitor.video.vo.AuthorityType;
 import com.monitor.video.vo.RestResult;
+import com.monitor.video.vo.User;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
 
-        RestResult resultMsg = RestResult.buildResult(RestResult.Status.AUTH_ERROR, null);
+        RestResult resultMsg = RestResult.buildResult(RestResult.Status.UNAUTHORIZED, null);
         response.getWriter().write(mapper.writeValueAsString(resultMsg));
         return false;
     }
@@ -76,7 +77,8 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                 logger.error(e.getMessage(), e);
             }
             if (claims != null) {
-                if(authority != null && authority.value() == AuthorityType.ADMIN && claims.get("user").toString().equals("admin"))
+                String userName = claims.get("user").toString();
+                if(authority != null && authority.value() == AuthorityType.ADMIN && User.isAdmin(userName))
                     return true;
                 else {
                     //TODO 需要验证权限
@@ -86,4 +88,5 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         }
         return false;
     }
+
 }
