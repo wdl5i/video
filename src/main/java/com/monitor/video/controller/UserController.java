@@ -27,7 +27,7 @@ public class UserController extends AbstractController {
     }
 
     @PostMapping("/login")
-    public RestResult<String> handleLogin(@RequestParam String userName, @RequestParam  String password) {
+    public RestResult<String> handleLogin(@RequestParam(name="userName") String userName, @RequestParam(name = "password")  String password) {
         return userService.login(userName, password);
     }
 
