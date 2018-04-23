@@ -31,7 +31,7 @@
         INSERT INTO group_facility (group_id, facility_id) VALUES (#{groupId}, #{facilityId})
     </insert>
 
-    <delete id="deleteUserGroup">
+    <delete id="deleteGroupFacility">
         DELETE FROM group_facility WHERE group_id = #{groupId} AND facility_id = #{facilityId}
     </delete>
 
