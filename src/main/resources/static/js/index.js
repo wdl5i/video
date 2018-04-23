@@ -40,9 +40,7 @@ var Home = {
     template: '#home',
     data:function(){
         let userInfo = {};
-        let userList = [{
-            name:'huangx'
-        }];
+        let userList = [];
         userInfo.token = JSON.parse(localStorage.getItem("userInfo")); //取出登录用户信息
         if(userInfo.token == null){
             console.log('not login');
@@ -60,10 +58,11 @@ var Home = {
         getUserList:function(pageNum, pageSize){
             // console.log("this",this);
             let _this = this;
-            let getUserUrl = '/user/page';
+            let getUserUrl = '/user/page?'+pageNum+'&'+pageSize;
             let params = {
-                pageNum:parseInt(pageNum),
-                pageSize:parseInt(pageSize),
+                // pageNum:parseInt(pageNum),
+                // pageSize:parseInt(pageSize),
+                'name':'wang'
             };
             vm.getData(getUserUrl,'GET',params, function(data){
                 console.log(data);
@@ -86,6 +85,34 @@ var Home = {
                 "phone":$("input[name='phone']").val()
             }
             vm.getData(addUrl,'POST',params,function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },{'auth':this.userInfo.token})
+        },
+        userUpdate:function(){
+            let updateUrl = '/user'
+            let params = {
+                "name":$("input[name='addName']").val(),
+                "password":$("input[name='addPsd']").val(),
+                "sex":$("input[name='sex']").val(),
+                "phone":$("input[name='phone']").val()
+            }
+            vm.getData(updateUrl,'PUT',params,function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },{'auth':this.userInfo.token})
+        },
+        userDelete:function(){
+            let deleteUrl = '/user'
+            let params = {
+                "name":$("input[name='addName']").val(),
+                "password":$("input[name='addPsd']").val(),
+                "sex":$("input[name='sex']").val(),
+                "phone":$("input[name='phone']").val()
+            }
+            vm.getData(deleteUrl,'DELETE',params,function(data){
                 console.log(data);
             },function(err){
                 console.log(err);
@@ -132,22 +159,40 @@ var vm = new Vue({
     },
     methods:{
         //获取数据的统一函数
-        getData: function (url, method, param, doneHandler, failHandler, headerObj) {
+        getData: function (url, method, param, doneHandler, failHandler, headerObj, isJson) {
             if (url) {
-                $.ajax({
-                    url: url,
-                    type: method || "GET",
-                    data: param || "",
-                    headers:headerObj
-                }).done(function (data) {
-                    if (doneHandler) {
-                        doneHandler(data);
-                    }
-                }).fail(function (err) {
-                    if (failHandler) {
-                        failHandler(err);
-                    }
-                })
+                if(isJson){
+                    $.ajax({
+                        url: url,
+                        type: method || "GET",
+                        data: param || "",
+                        contentType:"application/json",
+                        headers:headerObj
+                    }).done(function (data) {
+                        if (doneHandler) {
+                            doneHandler(data);
+                        }
+                    }).fail(function (err) {
+                        if (failHandler) {
+                            failHandler(err);
+                        }
+                    })
+                }else{
+                    $.ajax({
+                        url: url,
+                        type: method || "GET",
+                        data: param || "",
+                        headers:headerObj
+                    }).done(function (data) {
+                        if (doneHandler) {
+                            doneHandler(data);
+                        }
+                    }).fail(function (err) {
+                        if (failHandler) {
+                            failHandler(err);
+                        }
+                    })
+                }
             }
         }
     }
