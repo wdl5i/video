@@ -83,7 +83,7 @@ var Home = {
             let params = {
                 "name":$("input[name='addName']").val(),
                 "password":$("input[name='addPsd']").val(),
-                "sex":$("input[name='sex']").val(),
+                "sex":$("input[name='sex']:checked").val(),
                 "phone":$("input[name='phone']").val()
             }
             vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
@@ -98,13 +98,8 @@ var Home = {
             //默认填入修改用户信息
             $("input[name='addName']").val(user.name);
             $("input[name='addPsd']").val(user.password);
-            // if(user.sex == '男'){
-            //     $("input[id='male']").attr("checkd",true);
-            // }else{
-            //     $("input[id='famale']").attr("checkd",true);
-            // }
-            $("input[name='sex']").attr("checkd",false);
-            $("input[name='sex'][value="+user.sex+"]").attr("checkd",true);
+            $("input[name='sex']").prop("checked",false);
+            $("input[name='sex'][value="+user.sex+"]").prop("checked",true);
             $("input[name='phone']").val(user.phone);
         },
         comfirmUpdate:function(){
@@ -114,7 +109,7 @@ var Home = {
                 "id":this.currentUserId,
                 "name":$("input[name='addName']").val(),
                 "password":$("input[name='addPsd']").val(),
-                "sex":$("input[name='sex']").val(),
+                "sex":$("input[name='sex']:checked").val(),
                 "phone":$("input[name='phone']").val()
             }
             vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
