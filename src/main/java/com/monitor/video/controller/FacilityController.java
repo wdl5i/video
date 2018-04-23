@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/facility")
-public class FacilityController extends AbstractController<Facility> {
+public class FacilityController extends AbstractController {
     private FacilityService service;
 
     @Autowired
