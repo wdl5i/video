@@ -32,7 +32,7 @@ var Login = {
                 }
             },function(err){
                 console.log(err);
-            },'','')
+            },{},false)
         }
     },
 }
@@ -41,6 +41,7 @@ var Home = {
     data:function(){
         let userInfo = {};
         let userList = [];
+        let currentUserId = null;
         userInfo.token = JSON.parse(localStorage.getItem("userInfo")); //取出登录用户信息
         if(userInfo.token == null){
             console.log('not login');
@@ -50,7 +51,8 @@ var Home = {
         };
         return {
             userInfo:userInfo,
-            userList:userList
+            userList:userList,
+            currentUserId
         }
     },
     methods:{
@@ -62,9 +64,9 @@ var Home = {
             let params = {
                 // pageNum:parseInt(pageNum),
                 // pageSize:parseInt(pageSize),
-                'name':'wang'
+                // 'name':'wang'
             };
-            vm.getData(getUserUrl,'GET',params, function(data){
+            vm.getData(getUserUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
                     _this.userList = data.content.list;
@@ -74,7 +76,7 @@ var Home = {
                 }
             },function(err){
                 console.log(err);
-            },{'auth':this.userInfo.token})
+            },{'auth':this.userInfo.token},true)
         },
         userAdd:function(){
             let addUrl = '/user'
@@ -84,39 +86,53 @@ var Home = {
                 "sex":$("input[name='sex']").val(),
                 "phone":$("input[name='phone']").val()
             }
-            vm.getData(addUrl,'POST',params,function(data){
+            vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
                 console.log(data);
             },function(err){
                 console.log(err);
-            },{'auth':this.userInfo.token})
+            },{'auth':this.userInfo.token},true)
         },
-        userUpdate:function(){
+        userUpdate:function(userId,user){
+            $("#comfirmUpdate").css({'display':'block'});
+            this.currentUserId = userId;
+            //默认填入修改用户信息
+            $("input[name='addName']").val(user.name);
+            $("input[name='addPsd']").val(user.password);
+            // if(user.sex == '男'){
+            //     $("input[id='male']").attr("checkd",true);
+            // }else{
+            //     $("input[id='famale']").attr("checkd",true);
+            // }
+            $("input[name='sex']").attr("checkd",false);
+            $("input[name='sex'][value="+user.sex+"]").attr("checkd",true);
+            $("input[name='phone']").val(user.phone);
+        },
+        comfirmUpdate:function(){
+            console.log("id",this.currentUserId);
             let updateUrl = '/user'
             let params = {
+                "id":this.currentUserId,
                 "name":$("input[name='addName']").val(),
                 "password":$("input[name='addPsd']").val(),
                 "sex":$("input[name='sex']").val(),
                 "phone":$("input[name='phone']").val()
             }
-            vm.getData(updateUrl,'PUT',params,function(data){
+            vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
                 console.log(data);
             },function(err){
                 console.log(err);
-            },{'auth':this.userInfo.token})
+            },{'auth':this.userInfo.token},true)
         },
-        userDelete:function(){
-            let deleteUrl = '/user'
+        userDelete:function(userId){
+            let deleteUrl = '/user/'+userId;
             let params = {
-                "name":$("input[name='addName']").val(),
-                "password":$("input[name='addPsd']").val(),
-                "sex":$("input[name='sex']").val(),
-                "phone":$("input[name='phone']").val()
+                
             }
             vm.getData(deleteUrl,'DELETE',params,function(data){
                 console.log(data);
             },function(err){
                 console.log(err);
-            },{'auth':this.userInfo.token})
+            },{'auth':this.userInfo.token},true)
         }
     },
 }
