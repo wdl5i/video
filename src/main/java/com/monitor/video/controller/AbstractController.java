@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Created by donglin.wang on 2017/4/21.
+ * @param <T>
+ */
 @RestController
 @RequestMapping(value = "/",
                 produces = "application/json;charset=UTF-8",
@@ -30,7 +34,7 @@ public  class AbstractController<T> {
     }
 
     @PutMapping
-    public RestResult update(@RequestParam("pojo") T pojo) {
+    public RestResult update(@RequestBody T pojo) {
         return service.update(pojo);
     }
 

@@ -1,5 +1,8 @@
 package com.monitor.video.vo;
 
+import javax.persistence.Table;
+
+@Table(name = "grp")
 public class Group extends BaseEntity {
     private String remark;
     private float orderNum;

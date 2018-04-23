@@ -1,12 +1,15 @@
 package com.monitor.video.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@Entity
 public class BaseEntity {
     public static final int STATUS_OK = 1;
     public static final int STATUS_DEL = 0;
-
 
     @Id
     private int id;

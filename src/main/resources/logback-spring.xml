@@ -160,7 +160,7 @@
     <logger name="java.sql.PreparedStatement" level="DEBUG" />
 
     <!-- root级别   个人开发用DEBUG -->
-    <root level="ERROR">
+    <root level="INFO">
         <!-- 控制台输出-->
         <appender-ref ref="STDOUT" />
         <!-- 文件输出 -->

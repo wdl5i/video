@@ -1,7 +1,9 @@
 package com.monitor.video.controller;
 
 import com.monitor.video.service.UserService;
+import com.monitor.video.vo.Group;
 import com.monitor.video.vo.RestResult;
+import com.monitor.video.vo.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +30,7 @@ public class UserController extends AbstractController {
     public RestResult<String> handleLogin(@RequestParam String userName, @RequestParam  String password) {
         return userService.login(userName, password);
     }
+
+
 
 }
