@@ -58,7 +58,7 @@ var Home = {
         getUserList:function(pageNum, pageSize){
             // console.log("this",this);
             let _this = this;
-            let getUserUrl = '/user/page?'+pageNum+'&'+pageSize;
+            let getUserUrl = '/user/page/'+pageNum+'/'+pageSize;
             let params = {
                 // pageNum:parseInt(pageNum),
                 // pageSize:parseInt(pageSize),
