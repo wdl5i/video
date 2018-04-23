@@ -48,7 +48,7 @@ public  class AbstractController<T> {
         return service.findById(id);
     }
 
-    @PostMapping("/page/{pageNum}/{pageSize}")
+    @GetMapping("/page/{pageNum}/{pageSize}")
     public RestResult<Page<T>> page(@PathVariable(name = "pageNum") int pageNum,
                                     @PathVariable(name = "pageSize") int pageSize,
                                     @RequestBody T pojo) {
