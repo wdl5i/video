@@ -3,6 +3,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/index.css">
     <title>Document</title>
 </head>
 <body>
@@ -14,10 +17,10 @@
     <template id="login">
         <div>
             <p>登录页</p>
-            <form>
-                <input type="text" name="userName"/><br/>
-                <input type="password" name="password"/><br/>
-                <input type="button" value="登录" @click="login('/user/login')"><br/>
+            <form class="loginForm">
+                <el-input name="userName" placeholder="请输入用户名" clearable></el-input>
+                <el-input name="password" placeholder="请输入密码" clearable></el-input>
+                <el-button type="primary" @click="login('/user/login')">登录</el-button>
             </form>
         </div>
     </template>
@@ -26,35 +29,52 @@
     <template id="home">
         <div>
             <p>首页</p>
-            <p>恭喜你,登陆成功</p>
-            <div>
-                <p>这里是用户管理的router-view</p>
-                <button @click="getUserList(1,20)">获取用户列表</button>
-                <ul>
-                    <li v-for="(users,usersIndex) in userList">
-                        {{users.name}}:{{users.sex}}
-                        <button @click="userUpdate(users.id,users)">修改</button>
-                        <button @click="userDelete(users.id)">删除</button>
-                    </li>
-                </ul>
-                <input type="text" name="addName" /><br/>
-                <input type="text" name="addPsd" value="123456"/><br/>
-                <input type="radio" name="sex" value="男" id="male" checked="true"/><label for="male">男</label><br/>
-                <input type="radio" name="sex" value="女" id="famale"/><label for="famale">女</label><br/>
-                <input type="text" name="phone" /><br/>
-                <button @click="userAdd()">添加用户</button>
-                <button @click="comfirmUpdate()" id="comfirmUpdate" style="display: none">确认修改</button>
-                <router-view>
-                    
-                </router-view>
-            </div>
+            <p>登陆成功</p>
+            <el-menu :default-active="activeIndex" class="el-menu-demo" @select="handleSelect" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                <el-menu-item index="1">
+                    <router-link to="/home/userManage">用户管理</router-link>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <router-link to="/home/facilityManage">设备管理</router-link>
+                </el-menu-item>
+            </el-menu>
+            <router-view></router-view>
         </div>
     </template>
 
+    <!-- 用户管理模板 -->
+    <template id="userManage">
+        <div style="width: 300px">
+            <p>这里是用户管理的router-view</p>
+            <el-button type="primary" size="small" plain @click="getUserList(1,20)">获取用户列表</el-button>
+            <ul>
+                <li v-for="(users,usersIndex) in userList">
+                    {{users.name}}:{{users.sex}}
+                    <el-button type="primary" size="mini" @click="userUpdate(users.id,users)">修改</el-button>
+                    <el-button type="danger" size="mini" @click="userDelete(users.id)">删除</el-button>
+                </li>
+            </ul>
+            <el-input v-model="userInfo.userName" placeholder="请输入用户名" clearable></el-input><br/>
+            <el-input v-model="userInfo.password" placeholder="请输入密码" clearable></el-input><br/>
+            <el-radio v-model="userInfo.sex" label="男">男</el-radio>
+            <el-radio v-model="userInfo.sex" label="女">女</el-radio>
+            <el-input v-model="userInfo.phone" placeholder="请输入电话号码" clearable></el-input><br/>
+            <el-button type="primary" @click="userAdd()">添加用户</el-button>
+            <el-button type="primary" @click="comfirmUpdate()" id="comfirmUpdate" style="display: none">确认修改</el-button>
+        </div>
+    </template>
+
+    <!-- 设备管理模板 -->
+    <template id="facilityManage">
+        <p>这里是设备管理的router-view</p>
+    </template>
+    
 
     <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="js/vue.js"></script>
     <script type="text/javascript" src="js/vue-router.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
 </body>
 </html>
