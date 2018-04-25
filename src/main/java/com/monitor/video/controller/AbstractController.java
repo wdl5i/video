@@ -17,8 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/",
-                produces = "application/json;charset=UTF-8",
-                consumes = "application/json;charset=UTF-8"
+                produces = "application/json;charset=UTF-8"
 )
 public  class AbstractController<T> {
 

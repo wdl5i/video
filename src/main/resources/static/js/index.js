@@ -147,10 +147,189 @@ var userManage = {
 
 var facilityManage = {
     template: '#facilityManage',
+    data:function(){
+        let facilityList = [], currentFacilityId = null;
+        let facilityInfo = {
+            name:'',
+            ipAddr:'',
+            port:'',
+            type:1,
+            serial:''
+        }
+        return {
+            facilityList,
+            currentFacilityId,
+            facilityInfo
+        }
+    },
     methods:{
-    
+        //设备增删改查
+        getFacilityList:function(pageNum, pageSize){
+            //console.log('string',this.serial)
+            // console.log("this",this);
+            let _this = this;
+            let getFacilityUrl = '/facility/page/'+pageNum+'/'+pageSize;
+            let params = {
+                // pageNum:parseInt(pageNum),
+                // pageSize:parseInt(pageSize),
+                // 'name':'wang'
+            };
+            vm.getData(getFacilityUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.content){
+                    _this.facilityList = data.content.list;
+                }else{
+                    console.log("no user data");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        facilityAdd:function(){
+            let addUrl = '/facility'
+            let params = {
+                "name":this.facilityInfo.name,
+                "ipAddr":this.facilityInfo.ipAddr,
+                "port":this.facilityInfo.port,
+                "type":this.facilityInfo.type,
+                "serial":this.facilityInfo.serial
+            }
+            vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        facilityUpdate:function(facilityId,facility){
+            $("#facilityComfirmUpdate").css({'display':'block'});
+            this.currentFacilityId = facilityId;
+            //默认填入修改用户信息
+            this.facilityInfo.name = facility.name;
+            this.facilityInfo.ipAddr = facility.ipAddr;
+            this.facilityInfo.port = facility.port;
+            this.facilityInfo.serial = facility.serial;
+        },
+        facilityComfirmUpdate:function(){
+            console.log("id",this.currentFacilityId);
+            let updateUrl = '/facility'
+            let params = {
+                "id":this.currentFacilityId,
+                "name":this.facilityInfo.name,
+                "ipAddr":this.facilityInfo.ipAddr,
+                "port":this.facilityInfo.port,
+                "type":this.facilityInfo.type,
+                "serial":this.facilityInfo.serial
+            }
+            vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        facilityDelete:function(facilityId){
+            let deleteUrl = '/facility/'+facilityId;
+            let params = {
+                
+            }
+            vm.getData(deleteUrl,'DELETE',params,function(data){
+                console.log(data);
+            },function(err){
+                console.log(err);
+            },true,true)
+        }
     }
 }
+
+// var groupManage = {
+//     template: '#groupManage',
+//     data:function(){
+//         let groupList = [], currentGroupId = null;
+//         let groupInfo = {
+//             name:'',
+//             ipAddr:'',
+//             port:'',
+//             type:1
+//         };
+//         return {
+//             groupList,
+//             currentGroupId,
+//             groupInfo
+//         }
+//     },
+//     methods:{
+//         //设备增删改查
+//         getGroupList:function(pageNum, pageSize){
+//             // console.log("this",this);
+//             let _this = this;
+//             let getFacilityUrl = '/group/page/'+pageNum+'/'+pageSize;
+//             let params = {
+//                 // pageNum:parseInt(pageNum),
+//                 // pageSize:parseInt(pageSize),
+//                 // 'name':'wang'
+//             };
+//             vm.getData(getFacilityUrl,'POST',JSON.stringify(params), function(data){
+//                 console.log(data);
+//                 if(data.content){
+//                     _this.facilityList = data.content.list;
+//                 }else{
+//                     console.log("no user data");
+//                 }
+//             },function(err){
+//                 console.log(err);
+//             },true,true)
+//         },
+//         groupAdd:function(){
+//             let addUrl = '/facility'
+//             let params = {
+//                 "name":this.facilityInfo.name,
+//                 "ipAddr":this.facilityInfo.ipAddr,
+//                 "port":this.facilityInfo.port,
+//                 "type":this.facilityInfo.type
+//             }
+//             vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
+//                 console.log(data);
+//             },function(err){
+//                 console.log(err);
+//             },true,true)
+//         },
+//         groupUpdate:function(facilityId,facility){
+//             $("#facilityComfirmUpdate").css({'display':'block'});
+//             this.currentFacilityId = facilityId;
+//             //默认填入修改用户信息
+//             this.facilityInfo.name = facility.name;
+//             this.facilityInfo.ipAddr = facility.ipAddr;
+//             this.facilityInfo.port = facility.port;
+//         },
+//         groupComfirmUpdate:function(){
+//             console.log("id",this.currentFacilityId);
+//             let updateUrl = '/facility'
+//             let params = {
+//                 "id":this.currentFacilityId,
+//                 "name":this.facilityInfo.name,
+//                 "ipAddr":this.facilityInfo.ipAddr,
+//                 "port":this.facilityInfo.port,
+//                 "type":this.facilityInfo.type
+//             }
+//             vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
+//                 console.log(data);
+//             },function(err){
+//                 console.log(err);
+//             },true,true)
+//         },
+//         groupDelete:function(facilityId){
+//             let deleteUrl = '/facility/'+facilityId;
+//             let params = {
+                
+//             }
+//             vm.getData(deleteUrl,'DELETE',params,function(data){
+//                 console.log(data);
+//             },function(err){
+//                 console.log(err);
+//             },true,true)
+//         }
+//     }
+// }
+
 
 /* 定义路由 */
 var routes = [
