@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class UserService extends AbstractService {
+public class UserService extends AbstractService<User> {
 
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -44,7 +44,5 @@ public class UserService extends AbstractService {
         }
         return restResult;
     }
-
-
 
 }

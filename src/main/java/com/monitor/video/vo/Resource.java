@@ -2,8 +2,8 @@ package com.monitor.video.vo;
 
 public class Resource extends BaseEntity {
 
-    public static final int TYPE_MENU = 0;
-    public static final int TYPE_BUTTON = 1;
+    public static final int TYPE_BUTTON = 0;
+    public static final int TYPE_MENU = 1;
 
     private String url;
     private float orderNum;
