@@ -2,6 +2,8 @@ package com.monitor.video.vo;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.data.annotation.QueryAnnotation;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 

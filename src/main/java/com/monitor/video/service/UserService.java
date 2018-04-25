@@ -45,6 +45,8 @@ public class UserService extends AbstractService {
         return restResult;
     }
 
-
-
+    @Override
+    public RestResult add(Object entity) {
+        return super.add(entity);
+    }
 }
