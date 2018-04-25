@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/group")
-public class GroupController extends AbstractController {
+public class GroupController extends AbstractController<Group> {
 
     private GroupService service;
 

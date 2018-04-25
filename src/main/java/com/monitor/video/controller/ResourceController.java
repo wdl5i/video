@@ -7,7 +7,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
-public class ResourceController extends AbstractController {
+public class ResourceController extends AbstractController<Resource> {
 
     @RequestMapping("/{userId}/{id}")
     @Authority(AuthorityType.ADMIN)
