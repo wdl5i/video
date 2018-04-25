@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by donglin.wang on 2017/4/21.
@@ -50,7 +51,7 @@ public  class AbstractController<T> {
     @PostMapping("/page/{pageNum}/{pageSize}")
     public RestResult<Page<T>> page(@PathVariable(name = "pageNum") int pageNum,
                                     @PathVariable(name = "pageSize") int pageSize,
-                                    @RequestBody T pojo) {
+                                    @RequestBody Map pojo) {
         return service.page(pageNum, pageSize, pojo);
     }
 }
