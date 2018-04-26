@@ -53,6 +53,7 @@ var Home = {
         
     }
 }
+// 用户管理
 var userManage = {
     template: '#userManage',
     data:function(){
@@ -83,8 +84,23 @@ var userManage = {
             vm.getData(getUserUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
-                    _this.userList = data.content.list;
-                    // console.log("user data",this.userList);
+                    let contentList = data.content.list;
+                    if(contentList.length !== 0){
+                        _this.userList = [];
+                        $.each(contentList,function(i){
+                            _this.userList.push({
+                                id:contentList[i].id,
+                                name:contentList[i].name,
+                                password:contentList[i].password,
+                                sex:contentList[i].sex,
+                                phone:contentList[i].phone,
+                                userGroupList:[]
+                            })
+                        })
+                        // _this.userList = data.content.list;
+                        console.log("user data",_this.userList);
+                    }
+                    
                 }else{
                     console.log("no user data");
                 }
@@ -92,7 +108,25 @@ var userManage = {
                 console.log(err);
             },true,true)
         },
+        getUserGroup:function(userId,userGroupList){
+            let _this = this;
+            let userGroupUrl = '/group/userGroups/'+userId;
+            vm.getData(userGroupUrl,'GET','', function(data){
+                console.log(data);
+                if(data.message == 'OK' && data.content.length !== 0){
+                    $.each(_this.userList,function(i){
+                        if(_this.userList[i].id == userId){
+                            _this.userList[i].userGroupList = data.content;
+                        }
+                    })
+                }
+                console.log('userGroupList',userGroupList);
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
         userAdd:function(){
+            let _this = this;
             let addUrl = '/user'
             let params = {
                 "name":this.userInfo.userName,
@@ -102,11 +136,18 @@ var userManage = {
             }
             vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('用户添加成功');
+                    _this.getUserList(1,20);
+                }else{
+                    console.log('用户添加失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
         },
         userUpdate:function(userId,user){
+            console.log(userId,user);
             $("#comfirmUpdate").css({'display':'block'});
             this.currentUserId = userId;
             //默认填入修改用户信息
@@ -116,6 +157,7 @@ var userManage = {
             this.userInfo.phone = user.phone;
         },
         comfirmUpdate:function(){
+            let _this = this;
             console.log("id",this.currentUserId);
             let updateUrl = '/user'
             let params = {
@@ -127,17 +169,30 @@ var userManage = {
             }
             vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('用户修改成功');
+                    _this.getUserList(1,20);
+                }else{
+                    console.log('用户修改失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
         },
         userDelete:function(userId){
+            let _this = this;
             let deleteUrl = '/user/'+userId;
             let params = {
                 
             }
             vm.getData(deleteUrl,'DELETE',params,function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('用户删除成功');
+                    _this.getUserList(1,20);
+                }else{
+                    console.log('用户删除失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
@@ -186,6 +241,7 @@ var facilityManage = {
             },true,true)
         },
         facilityAdd:function(){
+            let _this = this;
             let addUrl = '/facility'
             let params = {
                 "name":this.facilityInfo.name,
@@ -196,6 +252,12 @@ var facilityManage = {
             }
             vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('设备添加成功');
+                    _this.getFacilityList(1,20);
+                }else{
+                    console.log('设备添加失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
@@ -210,6 +272,7 @@ var facilityManage = {
             this.facilityInfo.serial = facility.serial;
         },
         facilityComfirmUpdate:function(){
+            let _this = this;
             console.log("id",this.currentFacilityId);
             let updateUrl = '/facility'
             let params = {
@@ -222,17 +285,30 @@ var facilityManage = {
             }
             vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('设备修改成功');
+                    _this.getFacilityList(1,20);
+                }else{
+                    console.log('设备修改失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
         },
         facilityDelete:function(facilityId){
+            let _this = this;
             let deleteUrl = '/facility/'+facilityId;
             let params = {
                 
             }
             vm.getData(deleteUrl,'DELETE',params,function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('设备删除成功');
+                    _this.getFacilityList(1,20);
+                }else{
+                    console.log('设备删除失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
@@ -276,12 +352,19 @@ var groupManage = {
             },true,true)
         },
         groupAdd:function(){
+            let _this = this;
             let addUrl = '/group'
             let params = {
                 "name":this.groupInfo.name
             }
             vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('设备组添加成功');
+                    _this.getGroupList(1,20);
+                }else{
+                    console.log('设备组添加失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
@@ -294,6 +377,7 @@ var groupManage = {
         },
         groupComfirmUpdate:function(){
             console.log("id",this.currentGroupId);
+            let _this = this;
             let updateUrl = '/group'
             let params = {
                 "id":this.currentGroupId,
@@ -301,17 +385,30 @@ var groupManage = {
             }
             vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('设备组修改成功');
+                    _this.getGroupList(1,20);
+                }else{
+                    console.log('设备组修改失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)
         },
         groupDelete:function(groupId){
+            let _this = this;
             let deleteUrl = '/group/'+groupId;
             let params = {
                 
             }
             vm.getData(deleteUrl,'DELETE',params,function(data){
                 console.log(data);
+                if(data.message == 'OK'){
+                    console.log('设备组删除成功');
+                    _this.getGroupList(1,20);
+                }else{
+                    console.log('设备组删除失败');
+                }
             },function(err){
                 console.log(err);
             },true,true)

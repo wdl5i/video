@@ -47,16 +47,29 @@
 
     <!-- 用户管理模板 -->
     <template id="userManage">
-        <div style="width: 300px">
+        <div>
             <p>这里是用户管理的router-view</p>
             <el-button type="primary" size="small" plain @click="getUserList(1,20)">获取用户列表</el-button>
-            <ul>
-                <li v-for="(users,usersIndex) in userList">
-                    {{users.name}}:{{users.sex}}
-                    <el-button type="primary" size="mini" @click="userUpdate(users.id,users)">修改</el-button>
-                    <el-button type="danger" size="mini" @click="userDelete(users.id)">删除</el-button>
-                </li>
-            </ul>
+
+            <el-table :data="userList" stripe style="width: 100%">
+                <el-table-column prop="name" label="用户名称" width="180"></el-table-column>
+                <el-table-column prop="password" label="密码" width="180"></el-table-column>
+                <el-table-column prop="sex" label="性别" width="180"></el-table-column> 
+                <el-table-column prop="phone" label="电话号码" width="180"></el-table-column>
+                <el-table-column prop="option" label="操作" width="180">
+                    <template slot-scope="scope">
+                        <el-button size="mini" @click="userUpdate(scope.row.id,scope.row)">修改</el-button>
+                        <el-button size="mini"  type="danger" @click="userDelete(scope.row.id)">删除</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="groupId" label="设备组">
+                    <template slot-scope="scope">
+                        <el-button size="mini" type="primary" @click="getUserGroup(scope.row.id,scope.row.userGroupList)">查看</el-button>
+                        <el-tag type="success" v-for="userGroup in scope.row.userGroupList">{{userGroup.name}}</el-tag>
+                    </template>
+                </el-table-column>
+            </el-table>
+
             <el-input v-model="userInfo.userName" placeholder="请输入用户名" clearable></el-input><br/>
             <el-input v-model="userInfo.password" placeholder="请输入密码" clearable></el-input><br/>
             <el-radio v-model="userInfo.sex" label="男">男</el-radio>
