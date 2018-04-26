@@ -58,6 +58,8 @@ var userManage = {
     template: '#userManage',
     data:function(){
         let userList = [], currentUserId = null;
+        let checkGroupList = [];
+        let groupList;
         let userInfo = {
             userName:'name',
             password:'123456',
@@ -67,7 +69,13 @@ var userManage = {
         return {
             userList,
             currentUserId,
-            userInfo
+            userInfo,
+            dialogFormVisible: false,
+            formLabelWidth: '120px',
+            checkGroupList,
+            groupList,
+            loading:true,
+            isUserAdd:true
         }
     },
     methods:{
@@ -108,6 +116,23 @@ var userManage = {
                 console.log(err);
             },true,true)
         },
+        getAllGrpList:function(){
+            let _this = this;
+            let getGroupUrl = '/group/page/1/10000';
+            let params = {
+
+            };
+            vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.content){
+                    _this.groupList = data.content.list;
+                }else{
+                    console.log("no user data");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
         getUserGroup:function(userId,userGroupList){
             let _this = this;
             let userGroupUrl = '/group/userGroups/'+userId;
@@ -126,6 +151,7 @@ var userManage = {
             },true,true)
         },
         userAdd:function(){
+            console.log('groupList',this.checkGroupList)
             let _this = this;
             let addUrl = '/user'
             let params = {
@@ -138,6 +164,10 @@ var userManage = {
                 console.log(data);
                 if(data.message == 'OK'){
                     console.log('用户添加成功');
+                    _this.$message({
+                        type: 'success',
+                        message: '用户添加成功!'
+                      });
                     _this.getUserList(1,20);
                 }else{
                     console.log('用户添加失败');
@@ -171,6 +201,10 @@ var userManage = {
                 console.log(data);
                 if(data.message == 'OK'){
                     console.log('用户修改成功');
+                    _this.$message({
+                        type: 'success',
+                        message: '用户修改成功!'
+                      });
                     _this.getUserList(1,20);
                 }else{
                     console.log('用户修改失败');
@@ -180,22 +214,39 @@ var userManage = {
             },true,true)
         },
         userDelete:function(userId){
-            let _this = this;
-            let deleteUrl = '/user/'+userId;
-            let params = {
-                
-            }
-            vm.getData(deleteUrl,'DELETE',params,function(data){
-                console.log(data);
-                if(data.message == 'OK'){
-                    console.log('用户删除成功');
-                    _this.getUserList(1,20);
-                }else{
-                    console.log('用户删除失败');
+            this.$confirm('即将删除该用户及其所有数据, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                let _this = this;
+                let deleteUrl = '/user/'+userId;
+                let params = {
+                    
                 }
-            },function(err){
-                console.log(err);
-            },true,true)
+                vm.getData(deleteUrl,'DELETE',params,function(data){
+                    console.log(data);
+                    if(data.message == 'OK'){
+                        console.log('用户删除成功');
+                        _this.$message({
+                            type: 'success',
+                            message: '用户删除成功!'
+                          });
+                        _this.getUserList(1,20);
+                    }else{
+                        console.log('用户删除失败');
+                        _this.$message.error("用户删除失败");
+                    }
+                },function(err){
+                    console.log(err);
+                },true,true)
+              }).catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+                });          
+              });
+            
         }
     }
 }
