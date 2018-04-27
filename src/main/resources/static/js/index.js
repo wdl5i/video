@@ -116,7 +116,7 @@ var userManage = {
                 console.log(err);
             },true,true)
         },
-        getAllGrpList:function(){
+        getAllGrpList:function(userId){
             let _this = this;
             let getGroupUrl = '/group/page/1/10000';
             let params = {
@@ -125,7 +125,14 @@ var userManage = {
             vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
-                    _this.groupList = data.content.list;
+                    //_this.groupList = data.content.list;
+                    $.each(_this.userList,function(i){
+                        if(_this.userList[i].id == userId){
+                            _this.userList[i].userGroupList = data.content.list;
+                            console.log('userGroupList',_this.userList[i].userGroupList);
+                        }
+                    })
+                    
                 }else{
                     console.log("no user data");
                 }
@@ -139,19 +146,32 @@ var userManage = {
             vm.getData(userGroupUrl,'GET','', function(data){
                 console.log(data);
                 if(data.message == 'OK' && data.content.length !== 0){
-                    $.each(_this.userList,function(i){
-                        if(_this.userList[i].id == userId){
-                            _this.userList[i].userGroupList = data.content;
-                        }
+                    $.each(data.content,function(i){
+                        _this.checkGroupList.push(data.content[i].id);
                     })
                 }
-                console.log('userGroupList',userGroupList);
+                console.log('checkGroupList', _this.checkGroupList);
             },function(err){
                 console.log(err);
             },true,true)
         },
+        showThisGrpId:function(userId,groupId,ischecked){
+            if($(".el-checkbox input[type='checkbox'][name='groupCheckbox'][value='"+groupId+"']").is(':checked') == true){
+                console.log('选中');
+                let addUserGroupUrl = '/group/user/'+userId+'/'+groupId;
+                let params = {};
+                vm.getData(addUserGroupUrl,'POST',JSON.stringify(params), function(data){
+                    console.log(data);
+                },function(err){
+                    console.log(err);
+                },true,true)
+            }else{
+                console.log('未选中');
+            }
+            
+            console.log('绑定的checkGroupList',this.checkGroupList);
+        },
         userAdd:function(){
-            console.log('groupList',this.checkGroupList)
             let _this = this;
             let addUrl = '/user'
             let params = {

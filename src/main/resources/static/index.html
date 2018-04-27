@@ -40,6 +40,9 @@
                 <el-menu-item index="3">
                     <router-link to="/home/groupManage">设备组管理</router-link>
                 </el-menu-item>
+                <el-menu-item index="4">
+                    <router-link to="/home/userConfig">配置管理</router-link>
+                </el-menu-item>
             </el-menu>
             <router-view></router-view>
         </div>
@@ -65,8 +68,13 @@
                 </el-table-column>
                 <el-table-column prop="groupId" label="设备组">
                     <template slot-scope="scope">
-                        <el-button size="mini" type="primary" @click="getUserGroup(scope.row.id,scope.row.userGroupList)">查看</el-button>
-                        <el-tag type="success" v-for="userGroup in scope.row.userGroupList">{{userGroup.name}}</el-tag>
+                        <el-button size="mini" type="primary" @click="getUserGroup(scope.row.id,scope.row.userGroupList);getAllGrpList(scope.row.id)">查看</el-button>
+                        <!-- <el-tag type="success" v-for="userGroup in scope.row.userGroupList">{{userGroup.name}}</el-tag> -->
+                        <!-- <el-checkbox v-for="grp in groupList" :label="grp.id" border @click="showThisGrpId(grp.id)">{{grp.name}}</el-checkbox> -->
+                        <el-checkbox-group v-model="checkGroupList">
+                            <el-checkbox name="groupCheckbox" v-for="grp in scope.row.userGroupList" :label="grp.id" @change="showThisGrpId(scope.row.id,grp.id)" border>{{grp.name}}</el-checkbox>
+                        </el-checkbox-group>
+                        
                     </template>
                 </el-table-column>
             </el-table>
@@ -86,11 +94,11 @@
                     <el-radio v-model="userInfo.sex" label="男">男</el-radio>
                     <el-radio v-model="userInfo.sex" label="女">女</el-radio>
                 </el-form-item>
-                <el-form-item label="设备组" :label-width="formLabelWidth">
+                <!-- <el-form-item label="设备组" :label-width="formLabelWidth">
                     <el-checkbox-group v-model="checkGroupList">
                         <el-checkbox v-for="grp in groupList" :label="grp.id" border>{{grp.name}}</el-checkbox>
                     </el-checkbox-group>
-                </el-form-item>
+                </el-form-item> -->
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
