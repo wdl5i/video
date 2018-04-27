@@ -16,7 +16,7 @@ public class UserService extends AbstractService<User> {
 
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    private static final long ONE_HOUR_MILLS = 60 * 60 * 1000;
+    private static final long ONE_DAY_MILLS = 24 * 60 * 60 * 1000;
 
     private UserDao userDao;
 
@@ -36,7 +36,7 @@ public class UserService extends AbstractService<User> {
             String claimsStr = "";
             claims.put("userId", user.getId());
             try {
-                claimsStr = JWTUtil.createJWT("jwt", claims, ONE_HOUR_MILLS);
+                claimsStr = JWTUtil.createJWT("jwt", claims, ONE_DAY_MILLS);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

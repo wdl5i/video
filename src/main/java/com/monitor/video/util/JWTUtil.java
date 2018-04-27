@@ -2,9 +2,10 @@ package com.monitor.video.util;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
 import io.jsonwebtoken.*;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,8 @@ import java.util.Map;
 public class JWTUtil {
 
     private static final String JWT_SECRET = "hello_all";
+    private static Logger logger = LoggerFactory.getLogger(JWTUtil.class);
+
 
     /**
      * 创建jwt
@@ -25,6 +28,7 @@ public class JWTUtil {
     public static String createJWT(String id, Map<String, Object> claims, long ttlMillis) throws Exception {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256; //指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
         long nowMillis = System.currentTimeMillis();//生成JWT的时间
+        logger.info("create token timestamp:" + nowMillis);
         Date now = new Date(nowMillis);
 
         SecretKey key = generalKey();//生成签名的时候使用的秘钥secret,这个方法本地封装了的，一般可以从本地配置文件中读取，切记这个秘钥不能外露哦。它就是你服务端的私钥，在任何场景都不应该流露出去。一旦客户端得知这个secret, 那就意味着客户端是可以自我签发jwt了。
