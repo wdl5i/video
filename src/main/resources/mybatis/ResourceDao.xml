@@ -12,9 +12,16 @@
         SELECT id FROM resource WHERE status = 1 AND url like CONCAT('',#{url},'%')  AND method = #{method}
     </select>
 
+    <insert id="addAuth">
+        INSERT INTO user_resource (user_id, resource_id) VALUES (#{userId}, #{resourceId});
+    </insert>
 
+    <delete id="deleteAuth">
+        DELETE FROM user_resource WHERE user_id = #{userId} AND resource_id = #{resourceId};
+    </delete>
 
-    <!--<select id="findById" resultType="com.monitor.video.vo.User">-->
-        <!--SELECT * FROM user where id = #{id}-->
-    <!--</select>-->
+    <select id="userResourceCount" resultType="java.lang.Integer">
+        SELECT COUNT (id) FROM user_resource WHERE user_id = #{userId} AND resource_id = #{resourceId};
+    </select>
+
 </mapper>

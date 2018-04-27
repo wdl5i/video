@@ -25,12 +25,18 @@ public class ResourceController extends AbstractController<Resource> {
     }
 
     @PostMapping("/{userId}/{id}")
-    public RestResult<Resource> auth(@PathVariable("userId") String userId, @PathVariable("resourceId") String resourceId,  @RequestParam("val") boolean val) {
-        return null;
+    public RestResult addAuth(@PathVariable("userId") int userId, @PathVariable("resourceId") int resourceId) {
+        return service.auth(userId, resourceId, true);
     }
 
+    @DeleteMapping("/{userId}/{id}")
+    public RestResult removeAuth(@PathVariable("userId") int userId, @PathVariable("resourceId") int resourceId) {
+        return service.auth(userId, resourceId, false);
+    }
+
+    @Authority(AuthorityType.ADMIN)
     @GetMapping("/list/{userId}")
-    public RestResult<List<Resource>> list(@PathVariable("userId") String userId) {
+    public RestResult<List<Resource>> list(@PathVariable("userId") int userId) {
         return service.list(userId);
     }
 }

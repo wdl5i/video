@@ -22,6 +22,6 @@ public interface ResourceDao extends Mapper<Resource> {
 
    Integer findIdByUrl(@Param("url")String url, @Param("method")String method);
 
-   boolean ifAuthExist(@Param("userId")int userId, @Param("resourceId")int resourceId);
+   Integer userResourceCount(@Param("userId")int userId, @Param("resourceId")int resourceId);
 
 }
