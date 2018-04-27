@@ -3,28 +3,32 @@ package com.monitor.video.util;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.monitor.video.vo.Authority;
-import com.monitor.video.vo.AuthorityType;
-import com.monitor.video.vo.RestResult;
-import com.monitor.video.vo.User;
+import com.monitor.video.dao.ResourceDao;
+import com.monitor.video.vo.*;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import java.lang.reflect.Method;
 
+@Component
 public class SecurityInterceptor extends HandlerInterceptorAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(SecurityInterceptor.class);
     private static ObjectMapper mapper = new ObjectMapper();
 
+    private static ResourceDao resourceDao = ApplicationContextHelper.getBean(ResourceDao.class);
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
 
-        logger.info("preHandler:" + request.getRequestURI());
+        logger.info("preHandler url :" + request.getRequestURI() + ", method:" + request.getMethod());
         boolean validate = false;
         Authority authority = validateAuthType(handler);
         if(authority != null && authority.value() == AuthorityType.NO_VALIDATE) {
@@ -32,7 +36,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             return validate;
         } else {
             String auth = request.getHeader("auth");
-            validate = validateClaims(auth, authority);
+            validate = validateClaims(request, auth, authority);
             if(validate)
                 return true;
         }
@@ -54,7 +58,6 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             if (clazz != null && m != null) {
                 boolean isClzAnnotation = clazz.isAnnotationPresent(Authority.class);
                 boolean isMethodAnnotation = m.isAnnotationPresent(Authority.class);
-                // 如果方法和类声明中同时存在这个注解，那么方法中的会覆盖类中的设定。
                 if (isMethodAnnotation) {
                     authority = m.getAnnotation(Authority.class);
                 } else if (isClzAnnotation) {
@@ -67,8 +70,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         return authority;
     }
 
-    private boolean validateClaims(String auth, Authority authority) {
-
+    private boolean validateClaims(HttpServletRequest request, String auth, Authority authority) {
         if (!StringUtils.isEmpty(auth)) {
             Claims claims = null;
             try {
@@ -76,15 +78,18 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-            if (claims != null) {
-                String userName = claims.get("user").toString();
-                if(AuthorityType.requireAdmin(authority) && User.isAdmin(userName))
-                    return true;
-                else {
-                    //TODO 需要验证权限
-                    return true;
-                }
-            }
+            return true;
+//            if (claims != null) {
+//                int userId = Integer.parseInt(claims.get("userId").toString());
+//                if(AuthorityType.requireAdmin(authority) && User.isAdmin(userId))
+//                    return true;
+//                else {
+//                    Integer resourceId = resourceDao.findIdByUrl(request.getRequestURI(), request.getMethod());
+//                    if(resourceId == null || resourceId < 1)
+//                        return false;
+//                    return resourceDao.ifAuthExist(userId, resourceId);
+//                }
+//            }
         }
         return false;
     }

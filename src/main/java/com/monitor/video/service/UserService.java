@@ -34,7 +34,7 @@ public class UserService extends AbstractService<User> {
         } else {
             Map<String, Object> claims = new HashMap<>();
             String claimsStr = "";
-            claims.put("user", userName);
+            claims.put("userId", user.getId());
             try {
                 claimsStr = JWTUtil.createJWT("jwt", claims, ONE_HOUR_MILLS);
             } catch (Exception e) {

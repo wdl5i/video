@@ -1,7 +1,5 @@
 package com.monitor.video.vo;
 
-import org.apache.commons.lang3.StringUtils;
-
 import javax.persistence.Table;
 
 @Table(name = "user")
@@ -36,9 +34,8 @@ public class User extends BaseEntity{
         this.phone = phone;
     }
 
-
-    public static boolean isAdmin(String userName) {
-        return StringUtils.isNotEmpty(userName) && userName.equals("admin");
+    public static boolean isAdmin(int userId) {
+        return userId == 1;
     }
 
 }
