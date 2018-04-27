@@ -14,7 +14,11 @@ import java.util.List;
 @Repository
 public interface ResourceDao extends Mapper<Resource> {
 
-   List<Resource> list(@Param("userId") String userId);
+   List<Resource> list(@Param("userId") int userId);
+
+   void addAuth(@Param("userId") int userId, @Param("resourceId") int resourceId);
+
+   void deleteAuth(@Param("userId") int userId, @Param("resourceId") int resourceId);
 
    Integer findIdByUrl(@Param("url")String url, @Param("method")String method);
 

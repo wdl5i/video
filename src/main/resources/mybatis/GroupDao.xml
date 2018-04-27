@@ -12,11 +12,11 @@
     </select>
 
     <insert id="addUserGroup">
-        INSERT INTO user_group (user_id, group_id) VALUES (#{userId}, #{groupId})
+        INSERT INTO user_grp (user_id, group_id) VALUES (#{userId}, #{groupId})
     </insert>
 
     <delete id="deleteUserGroup">
-        DELETE FROM user_group WHERE user_id = #{userId} AND group_id = #{groupId}
+        DELETE FROM user_grp WHERE user_id = #{userId} AND group_id = #{groupId}
     </delete>
 
     <select id="getGroupFacilities" resultType="com.monitor.video.vo.Facility">
@@ -28,11 +28,11 @@
     </select>
 
     <insert id="addGroupFacility">
-        INSERT INTO group_facility (group_id, facility_id) VALUES (#{groupId}, #{facilityId})
+        INSERT INTO facility_grp (group_id, facility_id) VALUES (#{groupId}, #{facilityId})
     </insert>
 
     <delete id="deleteGroupFacility">
-        DELETE FROM group_facility WHERE group_id = #{groupId} AND facility_id = #{facilityId}
+        DELETE FROM facility_grp WHERE group_id = #{groupId} AND facility_id = #{facilityId}
     </delete>
 
 </mapper>
