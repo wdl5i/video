@@ -24,14 +24,12 @@ public class ResourceController extends AbstractController<Resource> {
         this.service = service;
     }
 
-    @RequestMapping("/{userId}/{id}")
-    @Authority(AuthorityType.ADMIN)
-    public RestResult<Resource> auth(@PathVariable("userId") String userId, @PathVariable("id") String id,  @RequestParam("val") boolean val) {
+    @PostMapping("/{userId}/{id}")
+    public RestResult<Resource> auth(@PathVariable("userId") String userId, @PathVariable("resourceId") String resourceId,  @RequestParam("val") boolean val) {
         return null;
     }
 
-    @Authority(AuthorityType.ADMIN)
-    @RequestMapping("/list/{userId}")
+    @GetMapping("/list/{userId}")
     public RestResult<List<Resource>> list(@PathVariable("userId") String userId) {
         return service.list(userId);
     }
