@@ -58,7 +58,6 @@ var userManage = {
     template: '#userManage',
     data:function(){
         let userList = [], currentUserId = null;
-        let checkGroupList = [];
         let groupList;
         let userInfo = {
             userName:'name',
@@ -72,7 +71,6 @@ var userManage = {
             userInfo,
             dialogFormVisible: false,
             formLabelWidth: '120px',
-            checkGroupList,
             groupList,
             loading:true,
             isUserAdd:true
@@ -102,7 +100,8 @@ var userManage = {
                                 password:contentList[i].password,
                                 sex:contentList[i].sex,
                                 phone:contentList[i].phone,
-                                userGroupList:[]
+                                userGroupList:[],
+                                checkGroupList:[]
                             })
                         })
                         // _this.userList = data.content.list;
@@ -146,11 +145,16 @@ var userManage = {
             vm.getData(userGroupUrl,'GET','', function(data){
                 console.log(data);
                 if(data.message == 'OK' && data.content.length !== 0){
-                    $.each(data.content,function(i){
-                        _this.checkGroupList.push(data.content[i].id);
+                    $.each(_this.userList,function(i){
+                        if(_this.userList[i].id == userId){
+                            _this.userList[i].checkGroupList = [];
+                            $.each(data.content,function(k){
+                                _this.userList[i].checkGroupList.push(data.content[k].id);
+                            })
+                            console.log('checkGroupList', _this.userList[i].checkGroupList);
+                        }
                     })
                 }
-                console.log('checkGroupList', _this.checkGroupList);
             },function(err){
                 console.log(err);
             },true,true)
@@ -167,9 +171,15 @@ var userManage = {
                 },true,true)
             }else{
                 console.log('未选中');
+                let deleteUserGroupUrl = '/group/user/'+userId+'/'+groupId;
+                let params = {};
+                vm.getData(deleteUserGroupUrl,'DELETE',JSON.stringify(params), function(data){
+                    console.log(data);
+                },function(err){
+                    console.log(err);
+                },true,true)
             }
-            
-            console.log('绑定的checkGroupList',this.checkGroupList);
+            //console.log('绑定的checkGroupList',this.checkGroupList);
         },
         userAdd:function(){
             let _this = this;
@@ -191,6 +201,7 @@ var userManage = {
                     _this.getUserList(1,20);
                 }else{
                     console.log('用户添加失败');
+                    _this.$message.error("用户添加失败");
                 }
             },function(err){
                 console.log(err);
@@ -198,7 +209,6 @@ var userManage = {
         },
         userUpdate:function(userId,user){
             console.log(userId,user);
-            $("#comfirmUpdate").css({'display':'block'});
             this.currentUserId = userId;
             //默认填入修改用户信息
             this.userInfo.userName = user.name;
@@ -228,6 +238,7 @@ var userManage = {
                     _this.getUserList(1,20);
                 }else{
                     console.log('用户修改失败');
+                    _this.$message.error("用户修改失败");
                 }
             },function(err){
                 console.log(err);
@@ -265,12 +276,12 @@ var userManage = {
                   type: 'info',
                   message: '已取消删除'
                 });          
-              });
+            });
             
         }
     }
 }
-
+// 设备管理
 var facilityManage = {
     template: '#facilityManage',
     data:function(){
@@ -386,18 +397,24 @@ var facilityManage = {
         }
     }
 }
-
+// 设备组管理
 var groupManage = {
     template: '#groupManage',
     data:function(){
         let groupList = [], currentGroupId = null;
+        let facilityList;
         let groupInfo = {
             name:''
         };
         return {
             groupList,
             currentGroupId,
-            groupInfo
+            groupInfo,
+            facilityList,
+            dialogFormVisible: false,
+            formLabelWidth: '120px',
+            loading:true,
+            isGroupAdd:true
         }
     },
     methods:{
@@ -407,20 +424,95 @@ var groupManage = {
             let _this = this;
             let getGroupUrl = '/group/page/'+pageNum+'/'+pageSize;
             let params = {
-                // pageNum:parseInt(pageNum),
-                // pageSize:parseInt(pageSize),
                 // 'name':'wang'
             };
             vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
-                    _this.groupList = data.content.list;
+                    let contentList = data.content.list;
+                    if(contentList.length !== 0){
+                        _this.groupList = [];
+                        $.each(contentList,function(i){
+                            _this.groupList.push({
+                                id:contentList[i].id,
+                                name:contentList[i].name,
+                                orderNum:contentList[i].orderNum,
+                                status:contentList[i].status,
+                                groupFacilityList:[],
+                                checkFacilityList:[]
+                            })
+                        })
+                        console.log("group data",_this.groupList);
+                    }
                 }else{
-                    console.log("no user data");
+                    console.log("no group data");
                 }
             },function(err){
                 console.log(err);
             },true,true)
+        },
+        getAllFacilityList:function(groupId){
+            let _this = this;
+            let getFacilityUrl = '/facility/page/1/10000';
+            let params = {
+
+            };
+            vm.getData(getFacilityUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.content){
+                    $.each(_this.groupList,function(i){
+                        if(_this.groupList[i].id == groupId){
+                            _this.groupList[i].groupFacilityList = data.content.list;
+                            console.log('groupFacilityList',_this.groupList[i].groupFacilityList);
+                        }
+                    })
+                }else{
+                    console.log("no group data");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        getGroupFacilities:function(groupId,groupFacilityList){
+            let _this = this;
+            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
+            vm.getData(groupFacilityUrl,'GET','', function(data){
+                console.log(data);
+                if(data.message == 'OK' && data.content.length !== 0){
+                    $.each(_this.groupList,function(i){
+                        if(_this.groupList[i].id == groupId){
+                            _this.groupList[i].checkFacilityList = [];
+                            $.each(data.content,function(k){
+                                _this.groupList[i].checkFacilityList.push(data.content[k].id);
+                            })
+                            console.log('checkFacilityList', _this.groupList[i].checkFacilityList);
+                        }
+                    })
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        showThisfacilityId:function(groupId,facilityId,ischecked){
+            if($(".el-checkbox input[type='checkbox'][name='facilityCheckbox'][value='"+facilityId+"']").is(':checked') == true){
+                console.log('选中');
+                let addGroupFacilityUrl = '/group/facility/'+groupId+'/'+facilityId;
+                let params = {};
+                vm.getData(addGroupFacilityUrl,'POST',JSON.stringify(params), function(data){
+                    console.log(data);
+                },function(err){
+                    console.log(err);
+                },true,true)
+            }else{
+                console.log('未选中');
+                let deleteGroupFacilityUrl = '/group/user/'+groupId+'/'+facilityId;
+                let params = {};
+                vm.getData(deleteGroupFacilityUrl,'DELETE',JSON.stringify(params), function(data){
+                    console.log(data);
+                },function(err){
+                    console.log(err);
+                },true,true)
+            }
         },
         groupAdd:function(){
             let _this = this;
@@ -432,9 +524,14 @@ var groupManage = {
                 console.log(data);
                 if(data.message == 'OK'){
                     console.log('设备组添加成功');
+                    _this.$message({
+                        type: 'success',
+                        message: '设备组添加成功!'
+                      });
                     _this.getGroupList(1,20);
                 }else{
                     console.log('设备组添加失败');
+                    _this.$message.error("设备组添加失败");
                 }
             },function(err){
                 console.log(err);
@@ -458,31 +555,55 @@ var groupManage = {
                 console.log(data);
                 if(data.message == 'OK'){
                     console.log('设备组修改成功');
+                    _this.$message({
+                        type: 'success',
+                        message: '设备组修改成功!'
+                      });
                     _this.getGroupList(1,20);
                 }else{
                     console.log('设备组修改失败');
+                    _this.$message.error("设备组修改失败");
                 }
             },function(err){
                 console.log(err);
             },true,true)
         },
         groupDelete:function(groupId){
-            let _this = this;
-            let deleteUrl = '/group/'+groupId;
-            let params = {
-                
-            }
-            vm.getData(deleteUrl,'DELETE',params,function(data){
-                console.log(data);
-                if(data.message == 'OK'){
-                    console.log('设备组删除成功');
-                    _this.getGroupList(1,20);
-                }else{
-                    console.log('设备组删除失败');
+            this.$confirm('即将删除该设备组及其所有数据, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                let _this = this;
+                let deleteUrl = '/group/'+groupId;
+                let params = {
+                    
                 }
-            },function(err){
-                console.log(err);
-            },true,true)
+                vm.getData(deleteUrl,'DELETE',params,function(data){
+                    console.log(data);
+                    if(data.message == 'OK'){
+                        console.log('设备组删除成功');
+                        _this.$message({
+                            type: 'success',
+                            message: '设备组删除成功!'
+                        });
+                        _this.getGroupList(1,20);
+                    }else{
+                        console.log('设备组删除失败');
+                        _this.$message.error("设备组删除失败");
+                    }
+                },function(err){
+                    console.log(err);
+                },true,true)
+              }).catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+                });          
+              });
+
+
+            
         }
     }
 }
