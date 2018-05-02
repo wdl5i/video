@@ -14,7 +14,7 @@ public class BaseEntity {
     @Id
     private int id;
     private String name;
-    private int status;
+    private int status = STATUS_OK;
 
     public int getId() {
         return id;
