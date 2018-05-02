@@ -681,6 +681,9 @@ var auth = {
             },function(err){
                 console.log(err);
             },true,true)
+        },
+        checkChange:function(data, checked, indeterminate){
+            console.log(data, checked, indeterminate);
         }
     }
 }

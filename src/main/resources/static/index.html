@@ -174,7 +174,7 @@
             <p>这里是用户授权的router-view</p>
             <el-button type="primary" size="small" plain @click="getMenuTree();getUserTree(1)">获取菜单树</el-button>
             
-            <el-tree :data="TreeData" show-checkbox node-key="id" default-expand-all :default-checked-keys="checkData" :props="defaultProps"></el-tree>
+            <el-tree :data="TreeData" show-checkbox node-key="id" default-expand-all :default-checked-keys="checkData" :props="defaultProps" @check-change="checkChange"></el-tree>
         </div>
     </template>
 
