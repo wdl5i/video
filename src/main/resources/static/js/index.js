@@ -505,7 +505,7 @@ var groupManage = {
                 },true,true)
             }else{
                 console.log('未选中');
-                let deleteGroupFacilityUrl = '/group/user/'+groupId+'/'+facilityId;
+                let deleteGroupFacilityUrl = '/group/facility/'+groupId+'/'+facilityId;
                 let params = {};
                 vm.getData(deleteGroupFacilityUrl,'DELETE',JSON.stringify(params), function(data){
                     console.log(data);
@@ -607,6 +607,83 @@ var groupManage = {
         }
     }
 }
+var auth = {
+    template:'#auth',
+    data:function(){
+        let TreeData = [];
+        let checkData = [];
+        return {
+            TreeData,
+            defaultProps: {
+                children: 'children',
+                label: 'label'
+            },
+            checkData,
+        }
+    },
+    methods:{
+        //获取所有树型菜单数据
+        getMenuTree:function(){
+            let _this = this;
+            let getTreeUrl = '/auth/page/1/10000';
+            let params = {
+               
+            };
+            vm.getData(getTreeUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.message == 'OK' && data.content !== null){
+                    _this.TreeData = [];
+                    let treeList = data.content.list;
+                    $.each(treeList,function(i){
+                        let parentId = treeList[i].id;
+                        if(!(treeList[i].hasOwnProperty('parentId'))){
+                            _this.TreeData.push({
+                                id: treeList[i].id,
+                                label: treeList[i].name,
+                                children: []
+                            })
+                        }
+                        $.each(treeList,function(k){
+                            if(treeList[k].parentId == parentId){
+                                setTimeout(function(){
+                                    $.each(_this.TreeData,function(j){
+                                        if(_this.TreeData[j].id == parentId){
+                                            _this.TreeData[j].children.push({
+                                                id: treeList[k].id,
+                                                label: treeList[k].name
+                                            })
+                                        }
+                                    })
+                                },1)
+                            }
+                        })
+                    })
+                }else{
+                    console.log('获取菜单失败');
+                    _this.$message.error("获取菜单树失败");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        getUserTree:function(userId){
+            let _this = this;
+            let getUserTreeUrl = '/auth/list/'+userId;
+            let params = {};
+            vm.getData(getUserTreeUrl,'GET',params, function(data){
+                console.log(data);
+                if(data.message == 'OK' && data.content !== null){
+                    
+                }else{
+                    console.log('获取用户菜单失败');
+                    _this.$message.error("获取用户菜单树失败");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        }
+    }
+}
 
 
 /* 定义路由 */
@@ -628,6 +705,9 @@ var routes = [
             },{
                 path:'groupManage',
                 component:groupManage
+            },{
+                path:'auth',
+                component:auth
             }
         ]
     },
