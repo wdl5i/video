@@ -612,6 +612,8 @@ var auth = {
     data:function(){
         let TreeData = [];
         let checkData = [];
+        let authUserList = [];
+        let currentAuthUserId;
         return {
             TreeData,
             defaultProps: {
@@ -619,9 +621,41 @@ var auth = {
                 label: 'label'
             },
             checkData,
+            showTree:false,
+            authUserList,
+            currentAuthUserId
         }
     },
     methods:{
+        //获取可授权的用户列表
+        getAuthUserList:function(pageNum,pageSize){
+            let _this = this;
+            let getUserUrl = '/user/page/'+pageNum+'/'+pageSize;
+            let params = {
+                
+            };
+            vm.getData(getUserUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.content){
+                    let contentList = data.content.list;
+                    if(contentList.length !== 0){
+                        _this.authUserList = [];
+                        $.each(contentList,function(i){
+                            _this.authUserList.push({
+                                id:contentList[i].id,
+                                name:contentList[i].name
+                            })
+                        })
+                        console.log("user data",_this.authUserList);
+                    }
+                    
+                }else{
+                    console.log("no user data");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
         //获取所有树型菜单数据
         getMenuTree:function(){
             let _this = this;
@@ -650,7 +684,8 @@ var auth = {
                                         if(_this.TreeData[j].id == parentId){
                                             _this.TreeData[j].children.push({
                                                 id: treeList[k].id,
-                                                label: treeList[k].name
+                                                label: treeList[k].name,
+                                                parentId:treeList[k].parentId
                                             })
                                         }
                                     })
@@ -668,12 +703,17 @@ var auth = {
         },
         getUserTree:function(userId){
             let _this = this;
+            _this.currentAuthUserId = userId;
             let getUserTreeUrl = '/auth/list/'+userId;
             let params = {};
             vm.getData(getUserTreeUrl,'GET',params, function(data){
                 console.log(data);
                 if(data.message == 'OK' && data.content !== null){
-                    
+                    _this.checkData = [];
+                    $.each(data.content,function(i){
+                        _this.checkData.push(data.content[i].id);
+                    })
+                    console.log('绑定选中id数组',_this.checkData);
                 }else{
                     console.log('获取用户菜单失败');
                     _this.$message.error("获取用户菜单树失败");
@@ -683,7 +723,89 @@ var auth = {
             },true,true)
         },
         checkChange:function(data, checked, indeterminate){
-            console.log(data, checked, indeterminate);
+            let _this = this;
+            //console.log(data, checked, indeterminate);
+            console.log('当前节点ID',data.id,checked);
+            let menuId = data.id;
+            let authUrl = '/auth/'+ parseInt(_this.currentAuthUserId) + '/' + parseInt(menuId);
+            let params = {};
+            //使用严格父子不关联方式 判断当前节点类型
+            if(data.hasOwnProperty('children')){
+                //当前为父节点
+                if(checked == true){
+                    //选中，发送POST请求
+                    vm.getData(authUrl,'POST',JSON.stringify(params), function(data){
+                        console.log(data);
+                        if(data.message == 'OK'){
+                            console.log('父节点授权成功');
+                        }else{
+                            console.log('父节点授权失败');
+                            _this.$message.error("授权失败");
+                        }
+                    },function(err){
+                        console.log(err);
+                    },true,true)
+                }else{
+                    //未选中，发送DELETE请求
+                    vm.getData(authUrl,'DELETE',params, function(data){
+                        console.log(data);
+                        if(data.message == 'OK'){
+                            console.log('授权成功');
+                        }else{
+                            console.log('授权失败');
+                            _this.$message.error("授权失败");
+                        }
+                    },function(err){
+                        console.log(err);
+                    },true,true)
+                }
+            }else{
+                //当前为子节点
+                if(checked == true){
+                    //选中，并且找到父节点设置选中
+                    let parentId = this.$refs.tree.getNode(menuId).parent.data.id;
+                    console.log("parentId",parentId);
+                    //发送子节点授权请求
+                    vm.getData(authUrl,'POST',JSON.stringify(params), function(data){
+                        console.log(data);
+                        if(data.message == 'OK'){
+                            console.log('子节点授权成功');
+                        }else{
+                            console.log('子节点授权成功');
+                            _this.$message.error("授权失败");
+                        }
+                    },function(err){
+                        console.log(err);
+                    },true,true)
+                    //发送父节点授权请求
+                    this.$refs.tree.setChecked(parentId,true);
+                    // let parentAuthUrl = '/auth/' + parseInt(_this.currentAuthUserId) + '/' + parseInt(parentId);
+                    // vm.getData(parentAuthUrl,'POST',JSON.stringify(params), function(data){
+                    //     console.log(data);
+                    //     if(data.message == 'OK'){
+                    //         console.log('父节点授权成功');
+                    //     }else{
+                    //         console.log('父节点授权成功');
+                    //         _this.$message.error("授权失败");
+                    //     }
+                    // },function(err){
+                    //     console.log(err);
+                    // },true,true)
+                }else{
+                    //未选中
+                    vm.getData(authUrl,'DELETE',params, function(data){
+                        console.log(data);
+                        if(data.message == 'OK'){
+                            console.log('取消授权成功');
+                        }else{
+                            console.log('取消授权成功');
+                            _this.$message.error("授权失败");
+                        }
+                    },function(err){
+                        console.log(err);
+                    },true,true)
+                }
+            }
         }
     }
 }
