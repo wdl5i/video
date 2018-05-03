@@ -39,6 +39,7 @@ public class ResourceService extends AbstractService<Resource> {
         RestResult<List<Resource>> restResult;
         try {
             if(value) {
+                dao.deleteAuth(userId, resourceId);
                 dao.addAuth(userId, resourceId);
             } else {
                 dao.deleteAuth(userId, resourceId);
