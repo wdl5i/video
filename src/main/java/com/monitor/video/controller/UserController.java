@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * Created by donglin.wang on 2018/4/14.
  */
@@ -26,7 +28,7 @@ public class UserController extends AbstractController<User> {
     }
 
     @PostMapping("/login")
-    public RestResult<String> handleLogin(@RequestParam(name="userName") String userName, @RequestParam(name = "password")  String password) {
+    public RestResult<Map<String, Object>> handleLogin(@RequestParam(name="userName") String userName, @RequestParam(name = "password")  String password) {
         return userService.login(userName, password);
     }
 
