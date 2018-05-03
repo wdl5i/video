@@ -45,6 +45,7 @@ public class ResourceService extends AbstractService<Resource> {
             }
             restResult = RestResult.buildSuccessResult();
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
         }
         return restResult;

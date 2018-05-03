@@ -24,12 +24,12 @@ public class ResourceController extends AbstractController<Resource> {
         this.service = service;
     }
 
-    @PostMapping("/{userId}/{id}")
+    @PostMapping("/{userId}/{resourceId}")
     public RestResult addAuth(@PathVariable("userId") int userId, @PathVariable("resourceId") int resourceId) {
         return service.auth(userId, resourceId, true);
     }
 
-    @DeleteMapping("/{userId}/{id}")
+    @DeleteMapping("/{userId}/{resourceId}")
     public RestResult removeAuth(@PathVariable("userId") int userId, @PathVariable("resourceId") int resourceId) {
         return service.auth(userId, resourceId, false);
     }
