@@ -614,6 +614,7 @@ var auth = {
         let checkData = [];
         let authUserList = [];
         let currentAuthUserId;
+        let lastCheckedData = [];
         return {
             TreeData,
             defaultProps: {
@@ -623,7 +624,8 @@ var auth = {
             checkData,
             showTree:false,
             authUserList,
-            currentAuthUserId
+            currentAuthUserId,
+            lastCheckedData
         }
     },
     methods:{
@@ -693,6 +695,7 @@ var auth = {
                             }
                         })
                     })
+                    console.log('_this.TreeData',_this.TreeData);
                 }else{
                     console.log('获取菜单失败');
                     _this.$message.error("获取菜单树失败");
@@ -714,6 +717,9 @@ var auth = {
                         _this.checkData.push(data.content[i].id);
                     })
                     console.log('绑定选中id数组',_this.checkData);
+                    _this.$refs.tree.setCheckedKeys(_this.checkData,false);
+                    console.log('整个树种选中keys',_this.$refs.tree.getCheckedKeys());
+                    _this.lastCheckedData = _this.$refs.tree.getCheckedKeys();
                 }else{
                     console.log('获取用户菜单失败');
                     _this.$message.error("获取用户菜单树失败");
@@ -722,11 +728,20 @@ var auth = {
                 console.log(err);
             },true,true)
         },
-        checkChange:function(data, checked, indeterminate){
+        checkChange:function(data, checkedObj){
+            //console.log(data, checkedObj);
             let _this = this;
-            //console.log(data, checked, indeterminate);
-            console.log('当前节点ID',data.id,checked);
+            let checked = true;
+            console.log('当前节点ID',data.id,'lastchecked',_this.lastCheckedData);
             let menuId = data.id;
+            //判断‘上次选中数据中是否含有当前节点ID’
+            if((_this.lastCheckedData).indexOf(menuId) == -1){
+                checked = true;
+            }else{
+                checked = false;
+            };
+            //将checkedKey存入‘上次选中数据’
+            _this.lastCheckedData = checkedObj.checkedKeys;
             let authUrl = '/auth/'+ parseInt(_this.currentAuthUserId) + '/' + parseInt(menuId);
             let params = {};
             //使用严格父子不关联方式 判断当前节点类型
@@ -750,14 +765,36 @@ var auth = {
                     vm.getData(authUrl,'DELETE',params, function(data){
                         console.log(data);
                         if(data.message == 'OK'){
-                            console.log('授权成功');
+                            console.log('父节点取消授权成功');
                         }else{
-                            console.log('授权失败');
+                            console.log('父节点取消授权失败');
                             _this.$message.error("授权失败");
                         }
                     },function(err){
                         console.log(err);
-                    },true,true)
+                    },true,true);
+
+                    //console.log(_this.$refs.tree.getNode(menuId));
+                    let currentNode = _this.$refs.tree.getNode(menuId).childNodes;
+                    //_this.$refs.tree.setCheckedKeys(menuId)
+                    $.each(currentNode,function(i){
+                        if(currentNode[i].checked){
+                            console.log('有选中的子节点',currentNode[i].data.id);
+                            _this.$refs.tree.setChecked(currentNode[i].data.id,false);
+                            let childrenAuthUrl = '/auth/' + parseInt(_this.currentAuthUserId) + '/' + parseInt(currentNode[i].data.id);
+                            vm.getData(childrenAuthUrl,'DELETE',params, function(data){
+                                console.log(data);
+                                if(data.message == 'OK'){
+                                    console.log('子节点取消授权成功');
+                                }else{
+                                    console.log('子节点取消授权失败');
+                                    _this.$message.error("授权失败");
+                                }
+                            },function(err){
+                                console.log(err);
+                            },true,true);
+                        }
+                    })
                 }
             }else{
                 //当前为子节点
@@ -779,18 +816,18 @@ var auth = {
                     },true,true)
                     //发送父节点授权请求
                     this.$refs.tree.setChecked(parentId,true);
-                    // let parentAuthUrl = '/auth/' + parseInt(_this.currentAuthUserId) + '/' + parseInt(parentId);
-                    // vm.getData(parentAuthUrl,'POST',JSON.stringify(params), function(data){
-                    //     console.log(data);
-                    //     if(data.message == 'OK'){
-                    //         console.log('父节点授权成功');
-                    //     }else{
-                    //         console.log('父节点授权成功');
-                    //         _this.$message.error("授权失败");
-                    //     }
-                    // },function(err){
-                    //     console.log(err);
-                    // },true,true)
+                    let parentAuthUrl = '/auth/' + parseInt(_this.currentAuthUserId) + '/' + parseInt(parentId);
+                    vm.getData(parentAuthUrl,'POST',JSON.stringify(params), function(data){
+                        console.log(data);
+                        if(data.message == 'OK'){
+                            console.log('父节点授权成功');
+                        }else{
+                            console.log('父节点授权成功');
+                            _this.$message.error("授权失败");
+                        }
+                    },function(err){
+                        console.log(err);
+                    },true,true)
                 }else{
                     //未选中
                     vm.getData(authUrl,'DELETE',params, function(data){
