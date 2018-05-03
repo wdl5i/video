@@ -16,6 +16,8 @@ public interface ResourceDao extends Mapper<Resource> {
 
    List<Resource> list(@Param("userId") int userId);
 
+   List<String> listName(@Param("userId") int userId);
+
    void addAuth(@Param("userId") int userId, @Param("resourceId") int resourceId);
 
    void deleteAuth(@Param("userId") int userId, @Param("resourceId") int resourceId);

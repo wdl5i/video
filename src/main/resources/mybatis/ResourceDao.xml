@@ -10,6 +10,12 @@
         WHERE ur.user_id = #{userId} and r.status = 1
     </select>
 
+    <select id="listName" resultType="java.lang.String">
+        SELECT r.name FROM resource r LEFT JOIN user_resource ur
+        ON r.id = ur.resource_id
+        WHERE ur.user_id = #{userId} and r.status = 1
+    </select>
+
     <select id="findIdByUrl" resultType="java.lang.Integer">
         SELECT id FROM resource WHERE status = 1 AND url like CONCAT('',#{url},'%')  AND (method = #{method} OR method = "ALL")
     </select>

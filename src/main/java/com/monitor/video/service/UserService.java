@@ -1,5 +1,6 @@
 package com.monitor.video.service;
 
+import com.monitor.video.dao.ResourceDao;
 import com.monitor.video.dao.UserDao;
 import com.monitor.video.util.JWTUtil;
 import com.monitor.video.vo.RestResult;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,6 +21,7 @@ public class UserService extends AbstractService<User> {
     private static final long ONE_DAY_MILLS = 24 * 60 * 60 * 1000;
 
     private UserDao userDao;
+    private ResourceDao resourceDao;
 
     @Autowired
     protected void setDao(UserDao dao) {
@@ -26,23 +29,32 @@ public class UserService extends AbstractService<User> {
         super.setDao(dao);
     }
 
-    public RestResult<String> login(String userName, String password) {
-        RestResult<String> restResult;
+    public RestResult<Map<String, Object>> login(String userName, String password) {
+        RestResult<Map<String, Object>> restResult;
+        Map<String, Object> dataResult = new HashMap<>();
         User user = userDao.login(userName, password);
         if(user == null) {
             restResult = RestResult.buildErrorResult(RestResult.Status.NOT_FOUND);
         } else {
             Map<String, Object> claims = new HashMap<>();
-            String claimsStr = "";
+            List<String> licensedResourceNameList;
             claims.put("userId", user.getId());
             try {
-                claimsStr = JWTUtil.createJWT("jwt", claims, ONE_DAY_MILLS);
+                String claimsStr = JWTUtil.createJWT("jwt", claims, ONE_DAY_MILLS);
+                licensedResourceNameList = getLicensedResource(user.getId());
+                dataResult.put("token", claimsStr);
+                dataResult.put("licensed", licensedResourceNameList);
+                restResult = RestResult.buildSuccessResult(dataResult);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
+                restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
             }
-            restResult = RestResult.buildSuccessResult(claimsStr);
         }
         return restResult;
+    }
+
+    private List<String> getLicensedResource(int userId) {
+        return resourceDao.listName(userId);
     }
 
 }
