@@ -5,7 +5,9 @@
 
 
     <select id="list" resultType="com.monitor.video.vo.Resource">
-        SELECT r.id, r.name FROM resource r LEFT JOIN user_resource ur where r.id = ur.resource_id and ur.user_id = #{userId} and r.status = 1
+        SELECT r.id, r.name FROM resource r LEFT JOIN user_resource ur
+        ON r.id = ur.resource_id
+        WHERE ur.user_id = #{userId} and r.status = 1
     </select>
 
     <select id="findIdByUrl" resultType="java.lang.Integer">

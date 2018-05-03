@@ -1,9 +1,10 @@
 package com.monitor.video.service;
 
 import com.monitor.video.dao.ResourceDao;
-import com.monitor.video.dao.UserDao;
 import com.monitor.video.vo.Resource;
 import com.monitor.video.vo.RestResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Service
 public class ResourceService extends AbstractService<Resource> {
+
+    private static Logger logger = LoggerFactory.getLogger(ResourceService.class);
 
     private ResourceDao dao;
 
@@ -26,6 +29,7 @@ public class ResourceService extends AbstractService<Resource> {
             List<Resource> resources =  dao.list(userId);
             restResult = RestResult.buildSuccessResult(resources);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
         }
         return restResult;
