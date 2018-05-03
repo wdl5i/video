@@ -21,6 +21,7 @@ public class UserService extends AbstractService<User> {
     private static final long ONE_DAY_MILLS = 24 * 60 * 60 * 1000;
 
     private UserDao userDao;
+    @Autowired
     private ResourceDao resourceDao;
 
     @Autowired
