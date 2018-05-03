@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,7 +43,7 @@ public class ResourceController extends AbstractController<Resource> {
     }
 
     @Authority(AuthorityType.NO_VALIDATE)
-    public RestResult hasPermission(@PathVariable("userId") int userId, HttpServletRequest request) {
-        return null;
+    public RestResult<Boolean> hasPermission(@RequestParam("userId") int userId, @RequestParam("url") String url, @RequestParam("method") String method) {
+        return service.hasPermission(userId, url, method);
     }
 }

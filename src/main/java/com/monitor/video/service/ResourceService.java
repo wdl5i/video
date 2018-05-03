@@ -50,4 +50,8 @@ public class ResourceService extends AbstractService<Resource> {
         }
         return restResult;
     }
+
+    public RestResult<Boolean> hasPermission(int userId, String url, String method) {
+        return null;
+    }
 }
