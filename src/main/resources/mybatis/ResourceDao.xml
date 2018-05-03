@@ -11,7 +11,7 @@
     </select>
 
     <select id="findIdByUrl" resultType="java.lang.Integer">
-        SELECT id FROM resource WHERE status = 1 AND url like CONCAT('',#{url},'%')  AND method = #{method}
+        SELECT id FROM resource WHERE status = 1 AND url like CONCAT('',#{url},'%')  AND (method = #{method} OR method = "ALL")
     </select>
 
     <insert id="addAuth">

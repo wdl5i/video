@@ -1,4 +1,4 @@
-package com.monitor.video;
+package com.monitor.video.config;
 
 import tk.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;

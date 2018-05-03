@@ -43,6 +43,7 @@ public class ResourceController extends AbstractController<Resource> {
     }
 
     @Authority(AuthorityType.NO_VALIDATE)
+    @GetMapping
     public RestResult<Boolean> hasPermission(@RequestParam("userId") int userId, @RequestParam("url") String url, @RequestParam("method") String method) {
         return service.hasPermission(userId, url, method);
     }

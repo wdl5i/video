@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class ResourceService extends AbstractService<Resource> {
         return restResult;
     }
 
+    @Transactional
     public RestResult auth(int userId, int resourceId, boolean value) {
         RestResult<List<Resource>> restResult;
         try {
@@ -53,6 +55,18 @@ public class ResourceService extends AbstractService<Resource> {
     }
 
     public RestResult<Boolean> hasPermission(int userId, String url, String method) {
-        return null;
+        RestResult<Boolean> restResult;
+        Integer resourceId;
+        try {
+            resourceId = dao.findIdByUrl(url, method);
+            if(resourceId == null || resourceId < 1)
+                restResult = RestResult.buildSuccessResult(Boolean.FALSE);
+            else
+                restResult = RestResult.buildSuccessResult(Boolean.TRUE);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            restResult = RestResult.buildErrorResult(RestResult.Status.INTERNAL_SERVER_ERROR);
+        }
+        return restResult;
     }
 }
