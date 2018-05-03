@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -38,5 +39,10 @@ public class ResourceController extends AbstractController<Resource> {
     @GetMapping("/list/{userId}")
     public RestResult<List<Resource>> list(@PathVariable("userId") int userId) {
         return service.list(userId);
+    }
+
+    @Authority(AuthorityType.NO_VALIDATE)
+    public RestResult hasPermission(@PathVariable("userId") int userId, HttpServletRequest request) {
+        return null;
     }
 }

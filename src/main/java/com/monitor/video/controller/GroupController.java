@@ -26,12 +26,12 @@ public class GroupController extends AbstractController<Group> {
         return service.getUserGroups(userId);
     }
 
-    @PostMapping("/user/{userId}/{groupId}")
+    @PostMapping("/userGroups/{userId}/{groupId}")
     public RestResult addUserGroup(@PathVariable String userId, @PathVariable String groupId) {
         return service.addUserGroup(userId, groupId);
     }
 
-    @DeleteMapping("/user/{userId}/{groupId}")
+    @DeleteMapping("/userGroups/{userId}/{groupId}")
     public RestResult removeUserGroup(@PathVariable String userId, @PathVariable String groupId) {
         return service.removeUserGroups(userId, groupId);
     }
@@ -41,12 +41,12 @@ public class GroupController extends AbstractController<Group> {
         return service.getGroupFacilities(groupId);
     }
 
-    @PostMapping("/facility/{groupId}/{facilityId}")
+    @PostMapping("/groupFacilities/{groupId}/{facilityId}")
     public RestResult addGroupFacility(@PathVariable String groupId, @PathVariable String facilityId) {
         return service.addGroupFacility(groupId, facilityId);
     }
 
-    @DeleteMapping("/facility/{userId}/{groupId}")
+    @DeleteMapping("/groupFacilities/{userId}/{groupId}")
     public RestResult removeGroupFacility(@PathVariable String groupId, @PathVariable String facilityId) {
         return service.removeGroupFacility(groupId, facilityId);
     }
