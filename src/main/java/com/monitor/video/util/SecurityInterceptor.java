@@ -97,7 +97,6 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                     }
                 }
             }
-            return true;
         }
         return false;
     }
