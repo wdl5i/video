@@ -14,24 +14,31 @@ var Login = {
             vm.getData(url,'POST',params,function(data){
                 console.log(data);
                 if(data.message == 'OK'){
-                    console.log('登录成功');
+                    console.log('登录成功',vm);
                     router.push({path:'/home'}); //登录成功跳转至主页
                     //设置用户信息的本地存储
-                    localStorage.setItem("userToken",JSON.stringify(data.content));
+                    localStorage.setItem("userToken",JSON.stringify(data.content.token));
+                    //设置用户菜单权限的本地存储
+                    localStorage.setItem("menuAuth",(data.content.licensed).join(","));
                 }else{
                     console.log('用户不存在');
                 }
             },function(err){
                 console.log(err);
             },false,false)
-        }
+        },
+        
     },
 }
 var Home = {
     template: '#home',
     data:function(){
+        let isUserManageShow = false, isFacilityManageShow = false, isGroupManageShow = false;
         return {
-            activeIndex: '1'
+            activeIndex: '1',
+            isUserManageShow,
+            isFacilityManageShow,
+            isGroupManageShow
         }
     },
     methods:{
@@ -40,6 +47,7 @@ var Home = {
         },
     },
     mounted:function(){
+        let _this = this;
         Vue.nextTick(function(){
             let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
             if(userToken == null){
@@ -48,9 +56,19 @@ var Home = {
             }else{
                 console.log('mounted',userToken,vm);
                 vm.token = userToken;
+                let menuAuth = (localStorage.getItem("menuAuth")).split(",");
+                if(menuAuth.indexOf('用户管理') !== -1){
+                    _this.isUserManageShow = true;
+                }
+                if(menuAuth.indexOf('设备管理') !== -1){
+                    _this.isFacilityManageShow = true;
+                }
+                if(menuAuth.indexOf('设备组管理') !== -1){
+                    _this.isGroupManageShow = true;
+                }
             };
+            
         })
-        
     }
 }
 // 用户管理
@@ -59,6 +77,7 @@ var userManage = {
     data:function(){
         let userList = [], currentUserId = null;
         let groupList;
+        let isUserManageAddShow = false, isUserManageDelShow = false ,isUserManageUpdateShow = false;
         let userInfo = {
             userName:'name',
             password:'123456',
@@ -73,7 +92,10 @@ var userManage = {
             formLabelWidth: '120px',
             groupList,
             loading:true,
-            isUserAdd:true
+            isUserAdd:true,
+            isUserManageAddShow,
+            isUserManageDelShow,
+            isUserManageUpdateShow
         }
     },
     methods:{
@@ -279,6 +301,31 @@ var userManage = {
             });
             
         }
+    },
+    mounted:function(){
+        let _this = this;
+        Vue.nextTick(function(){
+            let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
+            if(userToken == null){
+                console.log('not login');
+                router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
+            }else{
+                console.log('mounted',userToken,vm);
+                vm.token = userToken;
+                let menuAuth = (localStorage.getItem("menuAuth")).split(",");
+                if(menuAuth.indexOf('添加用户') !== -1){
+                    _this.isUserManageAddShow = true;
+                }
+                if(menuAuth.indexOf('删除用户') !== -1){
+                    _this.isUserManageDelShow = true;
+                }
+                if(menuAuth.indexOf('修改用户') !== -1){
+                    _this.isUserManageUpdateShow = true;
+                }
+            };
+            
+        })
+        
     }
 }
 // 设备管理
@@ -286,6 +333,7 @@ var facilityManage = {
     template: '#facilityManage',
     data:function(){
         let facilityList = [], currentFacilityId = null;
+        let isFacilityManageAddShow =false, isFacilityManageDelShow = false, isFacilityManageUpdateShow = false;
         let facilityInfo = {
             name:'',
             ipAddr:'',
@@ -296,7 +344,10 @@ var facilityManage = {
         return {
             facilityList,
             currentFacilityId,
-            facilityInfo
+            facilityInfo,
+            isFacilityManageAddShow,
+            isFacilityManageDelShow,
+            isFacilityManageUpdateShow
         }
     },
     methods:{
@@ -395,6 +446,31 @@ var facilityManage = {
                 console.log(err);
             },true,true)
         }
+    },
+    mounted:function(){
+        let _this = this;
+        Vue.nextTick(function(){
+            let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
+            if(userToken == null){
+                console.log('not login');
+                router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
+            }else{
+                console.log('mounted',userToken,vm);
+                vm.token = userToken;
+                let menuAuth = (localStorage.getItem("menuAuth")).split(",");
+                if(menuAuth.indexOf('添加设备') !== -1){
+                    _this.isFacilityManageAddShow = true;
+                }
+                if(menuAuth.indexOf('删除设备') !== -1){
+                    _this.isFacilityManageDelShow = true;
+                }
+                if(menuAuth.indexOf('修改设备') !== -1){
+                    _this.isFacilityManageUpdateShow = true;
+                }
+            };
+            
+        })
+        
     }
 }
 // 设备组管理
@@ -403,6 +479,7 @@ var groupManage = {
     data:function(){
         let groupList = [], currentGroupId = null;
         let facilityList;
+        let isGroupManageAddShow =false, isGroupManageDelShow = false, isGroupManageUpdateShow = false;
         let groupInfo = {
             name:''
         };
@@ -414,7 +491,10 @@ var groupManage = {
             dialogFormVisible: false,
             formLabelWidth: '120px',
             loading:true,
-            isGroupAdd:true
+            isGroupAdd:true,
+            isGroupManageAddShow,
+            isGroupManageDelShow,
+            isGroupManageUpdateShow
         }
     },
     methods:{
@@ -601,10 +681,32 @@ var groupManage = {
                   message: '已取消删除'
                 });          
               });
-
-
-            
         }
+    },
+    mounted:function(){
+        let _this = this;
+        Vue.nextTick(function(){
+            let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
+            if(userToken == null){
+                console.log('not login');
+                router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
+            }else{
+                console.log('mounted',userToken,vm);
+                vm.token = userToken;
+                let menuAuth = (localStorage.getItem("menuAuth")).split(",");
+                if(menuAuth.indexOf('添加组') !== -1){
+                    _this.isGroupManageAddShow = true;
+                }
+                if(menuAuth.indexOf('删除组') !== -1){
+                    _this.isGroupManageDelShow = true;
+                }
+                if(menuAuth.indexOf('修改组') !== -1){
+                    _this.isGroupManageUpdateShow = true;
+                }
+            };
+            
+        })
+        
     }
 }
 var auth = {
@@ -888,7 +990,7 @@ var router = new VueRouter({
 /* 创建vue根实例 */
 var vm = new Vue({
     data:{
-        token:''
+        token:'',
     },
     router,
     methods:{
