@@ -20,6 +20,8 @@ var Login = {
                     localStorage.setItem("userToken",JSON.stringify(data.content.token));
                     //设置用户菜单权限的本地存储
                     localStorage.setItem("menuAuth",(data.content.licensed).join(","));
+                    //设置用户ID的本地存储
+                    localStorage.setItem("userId",(data.content.userId).toString());
                 }else{
                     console.log('用户不存在');
                 }
@@ -34,11 +36,13 @@ var Home = {
     template: '#home',
     data:function(){
         let isUserManageShow = false, isFacilityManageShow = false, isGroupManageShow = false;
+        let userId = 0;
         return {
             activeIndex: '1',
             isUserManageShow,
             isFacilityManageShow,
-            isGroupManageShow
+            isGroupManageShow,
+            userId
         }
     },
     methods:{
@@ -65,6 +69,13 @@ var Home = {
                 }
                 if(menuAuth.indexOf('设备组管理') !== -1){
                     _this.isGroupManageShow = true;
+                }
+
+                let userId = parseInt(localStorage.getItem("userId"));
+                if(userId == null){
+                    console.log('userid 不存在');
+                }else{
+                    _this.userId = userId;
                 }
             };
             
@@ -717,6 +728,7 @@ var auth = {
         let authUserList = [];
         let currentAuthUserId;
         let lastCheckedData = [];
+        let currentUserId = 0;
         return {
             TreeData,
             defaultProps: {
@@ -727,7 +739,8 @@ var auth = {
             showTree:false,
             authUserList,
             currentAuthUserId,
-            lastCheckedData
+            lastCheckedData,
+            currentUserId
         }
     },
     methods:{
@@ -745,10 +758,14 @@ var auth = {
                     if(contentList.length !== 0){
                         _this.authUserList = [];
                         $.each(contentList,function(i){
-                            _this.authUserList.push({
-                                id:contentList[i].id,
-                                name:contentList[i].name
-                            })
+                            if(contentList[i].id == _this.currentUserId){
+                                console.log('过滤自己Id',contentList[i].id);
+                            }else{
+                                _this.authUserList.push({
+                                    id:contentList[i].id,
+                                    name:contentList[i].name
+                                })
+                            }
                         })
                         console.log("user data",_this.authUserList);
                     }
@@ -946,6 +963,27 @@ var auth = {
                 }
             }
         }
+    },
+    mounted:function(){
+        let _this = this;
+        Vue.nextTick(function(){
+            let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
+            if(userToken == null){
+                console.log('not login');
+                router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
+            }else{
+                console.log('mounted',userToken,vm);
+                vm.token = userToken;
+                let userId = (localStorage.getItem("userId"));
+                if(userId == null){
+                    console.log('userId 不存在');
+                }else{
+                    _this.currentUserId = userId;
+                }
+            };
+            
+        })
+        
     }
 }
 

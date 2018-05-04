@@ -40,7 +40,7 @@
                 <el-menu-item index="3" v-show="isGroupManageShow == true">
                     <router-link to="/home/groupManage">设备组管理</router-link>
                 </el-menu-item>
-                <el-menu-item index="4">
+                <el-menu-item index="4" v-show="userId == 1">
                     <router-link to="/home/auth">用户授权</router-link>
                 </el-menu-item>
             </el-menu>
