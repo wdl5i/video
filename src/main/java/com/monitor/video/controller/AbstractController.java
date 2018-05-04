@@ -1,6 +1,7 @@
 package com.monitor.video.controller;
 
 import com.monitor.video.service.AbstractService;
+import com.monitor.video.vo.BaseEntity;
 import com.monitor.video.vo.Page;
 import com.monitor.video.vo.RestResult;
 import com.monitor.video.vo.User;
@@ -54,6 +55,7 @@ public  class AbstractController<T> {
     public RestResult<Page<T>> page(@PathVariable(name = "pageNum") int pageNum,
                                     @PathVariable(name = "pageSize") int pageSize,
                                     @RequestBody Map pojo) {
+        pojo.put("status", BaseEntity.STATUS_OK);
         return service.page(pageNum, pageSize, pojo);
     }
 }

@@ -78,23 +78,25 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-//            if (claims != null) {
-//                int userId = Integer.parseInt(claims.get("userId").toString());
-//                if(AuthorityType.requireAdmin(authority) && User.isAdmin(userId))
-//                    return true;
-//                else {
-//                    Integer resourceId = resourceDao.findIdByUrl(request.getRequestURI(), request.getMethod());
-//                    if(resourceId == null || resourceId < 1)
-//                        return false;
-//                    int count =  resourceDao.userResourceCount(userId, resourceId);
-//                    if(count > 1) {
-//                        resourceDao.deleteAuth(userId, resourceId);
-//                        return false;
-//                    } else if(count == 1) {
-//                        return true;
-//                    }
-//                }
-//            }
+            if (claims != null) {
+                int userId = Integer.parseInt(claims.get("userId").toString());
+                if(User.isAdmin(userId))
+                    return true;
+                if(AuthorityType.requireAdmin(authority) && !User.isAdmin(userId))
+                    return false;
+                else {
+                    Integer resourceId = resourceDao.findIdByUrl(request.getRequestURI(), request.getMethod());
+                    if(resourceId == null || resourceId < 1)
+                        return false;
+                    int count =  resourceDao.userResourceCount(userId, resourceId);
+                    if(count > 1) {
+                        resourceDao.deleteAuth(userId, resourceId);
+                        return false;
+                    } else if(count == 1) {
+                        return true;
+                    }
+                }
+            }
             return true;
         }
         return false;

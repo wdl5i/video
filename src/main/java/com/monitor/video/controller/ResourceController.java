@@ -36,10 +36,18 @@ public class ResourceController extends AbstractController<Resource> {
         return service.auth(userId, resourceId, false);
     }
 
+
+
     @Authority(AuthorityType.ADMIN)
     @GetMapping("/list/{userId}")
     public RestResult<List<Resource>> list(@PathVariable("userId") int userId) {
         return service.list(userId);
+    }
+
+    @Override
+    @Authority(AuthorityType.ADMIN)
+    public RestResult<Page<Resource>> page(int pageNum, int pageSize, Map pojo) {
+        return super.page(pageNum, pageSize, pojo);
     }
 
     @Authority(AuthorityType.NO_VALIDATE)

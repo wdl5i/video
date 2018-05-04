@@ -21,6 +21,7 @@ public class UserService extends AbstractService<User> {
     private static final long ONE_DAY_MILLS = 24 * 60 * 60 * 1000;
 
     private UserDao userDao;
+
     @Autowired
     private ResourceDao resourceDao;
 
@@ -38,13 +39,14 @@ public class UserService extends AbstractService<User> {
             restResult = RestResult.buildErrorResult(RestResult.Status.NOT_FOUND);
         } else {
             Map<String, Object> claims = new HashMap<>();
-            List<String> licensedResourceNameList;
+            List<String> licensedNames;
             claims.put("userId", user.getId());
             try {
                 String claimsStr = JWTUtil.createJWT("jwt", claims, ONE_DAY_MILLS);
-                licensedResourceNameList = getLicensedResource(user.getId());
+                licensedNames = getLicensedNames(user.getId());
                 dataResult.put("token", claimsStr);
-                dataResult.put("licensed", licensedResourceNameList);
+                dataResult.put("licensed", licensedNames);
+                dataResult.put("userId", user.getId());
                 restResult = RestResult.buildSuccessResult(dataResult);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
@@ -54,8 +56,11 @@ public class UserService extends AbstractService<User> {
         return restResult;
     }
 
-    private List<String> getLicensedResource(int userId) {
-        return resourceDao.listName(userId);
+    private List<String> getLicensedNames(int userId) {
+        if(User.isAdmin(userId))
+            return resourceDao.listAllName(userId);
+        else
+            return resourceDao.listName(userId);
     }
 
 }

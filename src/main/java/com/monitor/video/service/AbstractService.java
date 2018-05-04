@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.common.Mapper;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class AbstractService<T> {
@@ -69,7 +70,7 @@ public abstract class AbstractService<T> {
         return restResult;
     }
 
-    public RestResult<Page<T>> page(@Param("pageNum") int pageNum, @Param("pageSize") int pageSize, @Param("entity") T entity) {
+    public RestResult<Page<T>> page(int pageNum, int pageSize, T entity) {
         RestResult<Page<T>> restResult;
         try {
             List<T> users = dao.selectByRowBounds(entity, new RowBounds(Page.calcuOffset(pageNum, pageSize), pageSize));
