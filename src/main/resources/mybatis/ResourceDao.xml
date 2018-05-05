@@ -21,7 +21,7 @@
     </select>
 
     <select id="findIdByUrl" resultType="java.lang.Integer">
-        SELECT id FROM resource WHERE status = 1 AND url like CONCAT('',#{url},'%')  AND (method = #{method} OR method = "ALL")
+        SELECT id FROM resource WHERE status = 1 AND url = #{url} AND (method = #{method} OR method = "ALL")
     </select>
 
     <insert id="addAuth">
@@ -33,7 +33,7 @@
     </delete>
 
     <select id="userResourceCount" resultType="java.lang.Integer">
-        SELECT COUNT (id) FROM user_resource WHERE user_id = #{userId} AND resource_id = #{resourceId};
+        SELECT COUNT(id) FROM user_resource WHERE user_id = #{userId} AND resource_id = #{resourceId};
     </select>
 
 </mapper>

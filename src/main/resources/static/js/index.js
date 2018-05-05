@@ -195,7 +195,7 @@ var userManage = {
         showThisGrpId:function(userId,groupId,ischecked){
             if($(".el-checkbox input[type='checkbox'][name='groupCheckbox'][value='"+groupId+"']").is(':checked') == true){
                 console.log('选中');
-                let addUserGroupUrl = '/group/userGroup/'+userId+'/'+groupId;
+                let addUserGroupUrl = '/group/userGroups/'+userId+'/'+groupId;
                 let params = {};
                 vm.getData(addUserGroupUrl,'POST',JSON.stringify(params), function(data){
                     console.log(data);
@@ -204,7 +204,7 @@ var userManage = {
                 },true,true)
             }else{
                 console.log('未选中');
-                let deleteUserGroupUrl = '/group/userGroup/'+userId+'/'+groupId;
+                let deleteUserGroupUrl = '/group/userGroups/'+userId+'/'+groupId;
                 let params = {};
                 vm.getData(deleteUserGroupUrl,'DELETE',JSON.stringify(params), function(data){
                     console.log(data);

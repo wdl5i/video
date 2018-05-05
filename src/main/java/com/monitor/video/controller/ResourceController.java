@@ -46,7 +46,10 @@ public class ResourceController extends AbstractController<Resource> {
 
     @Override
     @Authority(AuthorityType.ADMIN)
-    public RestResult<Page<Resource>> page(int pageNum, int pageSize, Map pojo) {
+    @PostMapping("/page/{pageNum}/{pageSize}")
+    public RestResult<Page<Resource>> page(@PathVariable(name = "pageNum") int pageNum,
+                                           @PathVariable(name = "pageSize") int pageSize,
+                                           @RequestBody Map pojo) {
         return super.page(pageNum, pageSize, pojo);
     }
 

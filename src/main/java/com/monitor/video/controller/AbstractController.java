@@ -56,6 +56,12 @@ public  class AbstractController<T> {
                                     @PathVariable(name = "pageSize") int pageSize,
                                     @RequestBody Map pojo) {
         pojo.put("status", BaseEntity.STATUS_OK);
-        return service.page(pageNum, pageSize, pojo);
+        RestResult<Page<T>> restResult = null;
+        try {
+            restResult =  service.page(pageNum, pageSize, pojo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return restResult;
     }
 }

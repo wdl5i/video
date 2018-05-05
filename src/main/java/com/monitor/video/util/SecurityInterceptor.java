@@ -82,7 +82,8 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                     if(AuthorityType.requireAdmin(authority) && !User.isAdmin(userId))
                         return false;
                     else {
-                        Integer resourceId = resourceDao.findIdByUrl(request.getRequestURI(), request.getMethod());
+                        String url = trimUrl(request.getRequestURI());
+                        Integer resourceId = resourceDao.findIdByUrl(url, request.getMethod());
                         if(resourceId == null || resourceId < 1)
                             return false;
                         int count =  resourceDao.userResourceCount(userId, resourceId);
@@ -99,6 +100,14 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
             }
         }
         return false;
+    }
+
+    private String trimUrl(String originUrl) {
+        int digitalIndex = StringUtil.digitalIndex(originUrl);
+        if(digitalIndex > 0) {
+            return originUrl.substring(0, digitalIndex - 1);
+        }
+        return originUrl;
     }
 
 }
