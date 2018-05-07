@@ -37,17 +37,71 @@ var Home = {
     data:function(){
         let isUserManageShow = false, isFacilityManageShow = false, isGroupManageShow = false;
         let userId = 0;
+        let showAside = true;
+        let groupList = [];
         return {
             activeIndex: '1',
             isUserManageShow,
             isFacilityManageShow,
             isGroupManageShow,
-            userId
+            userId,
+            showAside,
+            groupList,
         }
     },
     methods:{
         handleSelect(key, keyPath) {
             console.log('keyPath',key, keyPath);
+        },
+        getGroupList:function(pageNum, pageSize){
+            // console.log("this",this);
+            let _this = this;
+            let getGroupUrl = '/group/page/'+pageNum+'/'+pageSize;
+            let params = {
+
+            };
+            vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.content){
+                    let contentList = data.content.list;
+                    if(contentList.length !== 0){
+                        _this.groupList = [];
+                        $.each(contentList,function(i){
+                            _this.groupList.push({
+                                id:contentList[i].id,
+                                name:contentList[i].name,
+                                orderNum:contentList[i].orderNum,
+                                status:contentList[i].status,
+                                groupFacilityList:[{name:'当下无设备',id:-1}]
+                            })
+                        })
+                        console.log("group data",_this.groupList);
+                    }
+                }else{
+                    console.log("no group data");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        getThisFacilities:function(key,keyPath){
+            // console.log('dddddddddddddddddd',key,keyPath);
+            let _this = this;
+            let groupId = parseInt(key);
+            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
+            vm.getData(groupFacilityUrl,'GET','', function(data){
+                console.log(data);
+                if(data.message == 'OK' && data.content.length !== 0){
+                    $.each(_this.groupList,function(i){
+                        if(_this.groupList[i].id == groupId){
+                            _this.groupList[i].groupFacilityList = data.content;
+                            //console.log('groupFacilityList', _this.groupList[i].groupFacilityList);
+                        }
+                    })
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
         },
     },
     mounted:function(){
@@ -78,7 +132,6 @@ var Home = {
                     _this.userId = userId;
                 }
             };
-            
         })
     }
 }
@@ -95,6 +148,9 @@ var userManage = {
             sex:'女',
             phone:'13488888888'
         };
+        let currentPage = 1;
+        let total = 10000;
+        let currentSize = 10;
         return {
             userList,
             currentUserId,
@@ -106,23 +162,33 @@ var userManage = {
             isUserAdd:true,
             isUserManageAddShow,
             isUserManageDelShow,
-            isUserManageUpdateShow
+            isUserManageUpdateShow,
+            currentPage,
+            currentSize,
+            total
         }
     },
     methods:{
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
+            this.currentSize = val;
+            this.getUserList(this.currentPage,val);
+        },
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+            this.currentPage = val;
+            this.getUserList(val,this.currentSize);
+        },
         //用户增删改查
         getUserList:function(pageNum, pageSize){
-            // console.log("this",this);
             let _this = this;
             let getUserUrl = '/user/page/'+pageNum+'/'+pageSize;
-            let params = {
-                // pageNum:parseInt(pageNum),
-                // pageSize:parseInt(pageSize),
-                // 'name':'wang'
-            };
+            let params = {};
             vm.getData(getUserUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
+                    _this.total = data.content.count;
+                    _this.currentPage = data.content.pageNo;
                     let contentList = data.content.list;
                     if(contentList.length !== 0){
                         _this.userList = [];
@@ -140,7 +206,6 @@ var userManage = {
                         // _this.userList = data.content.list;
                         console.log("user data",_this.userList);
                     }
-                    
                 }else{
                     console.log("no user data");
                 }
@@ -231,7 +296,7 @@ var userManage = {
                         type: 'success',
                         message: '用户添加成功!'
                       });
-                    _this.getUserList(1,20);
+                    _this.getUserList(_this.currentPage,_this.currentSize);
                 }else{
                     console.log('用户添加失败');
                     _this.$message.error("用户添加失败");
@@ -268,7 +333,7 @@ var userManage = {
                         type: 'success',
                         message: '用户修改成功!'
                       });
-                    _this.getUserList(1,20);
+                    _this.getUserList(_this.currentPage,_this.currentSize);
                 }else{
                     console.log('用户修改失败');
                     _this.$message.error("用户修改失败");
@@ -296,7 +361,7 @@ var userManage = {
                             type: 'success',
                             message: '用户删除成功!'
                           });
-                        _this.getUserList(1,20);
+                        _this.getUserList(_this.currentPage,_this.currentSize);
                     }else{
                         console.log('用户删除失败');
                         _this.$message.error("用户删除失败");
@@ -334,9 +399,8 @@ var userManage = {
                     _this.isUserManageUpdateShow = true;
                 }
             };
-            
+            _this.getUserList(_this.currentPage,_this.currentSize);
         })
-        
     }
 }
 // 设备管理
@@ -1076,4 +1140,12 @@ var vm = new Vue({
             }
         }
     },
+    mounted:function(){
+        Vue.nextTick(function(){
+            //获取高度
+            let bodyHeight = $('body').height();
+            console.log("bodyHeight",bodyHeight);
+            $(".el-container").css({"height":bodyHeight-265});
+        })
+    }
 }).$mount("#app")
