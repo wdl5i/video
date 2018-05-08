@@ -68,3 +68,10 @@ li[role='menuitem'] > a {
     margin: 20px 0;
     text-align: right;
 }
+.cell {
+    font-size: 14px;
+    color: #606266;
+}
+.el-menu {
+    border: none;
+}
