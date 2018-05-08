@@ -252,24 +252,31 @@
     <!-- 用户授权模板 -->
     <template id="auth">
         <div>
-            <p>这里是用户授权的router-view
-                <el-button type="primary" size="small" plain @click="getAuthUserList(1,20);getMenuTree()">获取授权用户列表</el-button>
-            </p>
-            
-
-            <div style="width: 30%;display: inline-block;">
-                <el-table :data="authUserList" stripe style="width: 100%">
-                    <el-table-column prop="name" label="用户名称" width="180"></el-table-column>
-                    <el-table-column prop="option" label="操作" width="180">
+            <div class="crumbs">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item><i class="el-icon-tickets"></i>设备列表</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="container">
+                <el-table :data="authUserList" stripe border style="width: 100%">
+                    <el-table-column prop="name" label="用户名称"></el-table-column>
+                    <el-table-column prop="option" label="操作" width="100">
                         <template slot-scope="scope">
-                            <el-button size="mini" @click="getUserTree(scope.row.id);showTree = true">授权</el-button>
+                            <el-button size="mini" @click="getUserTree(scope.row.id);dialogFormVisible = true">授权</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
+                
+                <div class="pagination">
+                    <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+                    layout="total, sizes, prev, pager, next" :total="total" :page-size="currentSize"
+                    :current-page="currentPage" :page-sizes="[10, 20, 50, 100]"></el-pagination>
+                </div>
             </div>
-            <div style="width: 50%;display: inline-block;" v-show='showTree == true'>
+            <!-- 用户授权对话框 -->
+            <el-dialog title="用户授权" :visible.sync="dialogFormVisible">
                 <el-tree :data="TreeData" show-checkbox ref="tree" node-key="id" :check-strictly='true' default-expand-all :props="defaultProps" @check="checkChange"></el-tree>
-            </div>
+            </el-dialog>
         </div>
     </template>
 

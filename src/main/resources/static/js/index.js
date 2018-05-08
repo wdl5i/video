@@ -975,6 +975,10 @@ var auth = {
         let currentAuthUserId;
         let lastCheckedData = [];
         let currentUserId = 0;
+
+        let currentPage = 1;
+        let total = 10000;
+        let currentSize = 10;
         return {
             TreeData,
             defaultProps: {
@@ -982,24 +986,37 @@ var auth = {
                 label: 'label'
             },
             checkData,
-            showTree:false,
+            dialogFormVisible: false,
             authUserList,
             currentAuthUserId,
             lastCheckedData,
-            currentUserId
+            currentUserId,
+            currentPage,
+            currentSize,
+            total
         }
     },
     methods:{
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
+            this.currentSize = val;
+            this.getAuthUserList(this.currentPage,val);
+        },
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+            this.currentPage = val;
+            this.getAuthUserList(val,this.currentSize);
+        },
         //获取可授权的用户列表
         getAuthUserList:function(pageNum,pageSize){
             let _this = this;
             let getUserUrl = '/user/page/'+pageNum+'/'+pageSize;
-            let params = {
-                
-            };
+            let params = {};
             vm.getData(getUserUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
+                    _this.total = data.content.count;
+                    _this.currentPage = data.content.pageNo;
                     let contentList = data.content.list;
                     if(contentList.length !== 0){
                         _this.authUserList = [];
@@ -1227,7 +1244,8 @@ var auth = {
                     _this.currentUserId = userId;
                 }
             };
-            
+            _this.getAuthUserList(_this.currentPage,_this.currentSize);
+            _this.getMenuTree();
         })
         
     }
