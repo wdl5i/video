@@ -135,6 +135,33 @@ var Home = {
         })
     }
 }
+//实时监控
+var monitor = {
+    template: '#monitor',
+    data:function(){
+        
+        return {
+            message: '这里是实时监控的页面'
+        }
+    },
+    methods:{
+        
+    },
+    mounted:function(){
+        let _this = this;
+        Vue.nextTick(function(){
+            let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
+            if(userToken == null){
+                console.log('not login');
+                router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
+            }else{
+                console.log('mounted',userToken,vm);
+                vm.token = userToken;
+            };
+        })
+    }
+}
+
 // 用户管理
 var userManage = {
     template: '#userManage',
@@ -1263,6 +1290,9 @@ var routes = [
         component:Home,
         children:[
             {
+                path:'monitor',
+                component:monitor
+            },{
                 path:'userManage',
                 component:userManage
             },{
