@@ -15,7 +15,7 @@ var Login = {
                 console.log(data);
                 if(data.message == 'OK'){
                     console.log('登录成功',vm);
-                    router.push({path:'/home'}); //登录成功跳转至主页
+                    router.push({path:'/home/monitor'}); //登录成功跳转至主页
                     //设置用户信息的本地存储
                     localStorage.setItem("userToken",JSON.stringify(data.content.token));
                     //设置用户菜单权限的本地存储
@@ -47,9 +47,23 @@ var Home = {
             userId,
             showAside,
             groupList,
+            userName:'admin'
+        }
+    },
+    computed:{
+        username(){
+            let username = localStorage.getItem('ms_username');
+            return username ? username : this.userName;
         }
     },
     methods:{
+        // 用户名下拉菜单选择事件
+        handleCommand(command) {
+            if(command == 'loginout'){
+                localStorage.removeItem('userToken')
+                router.push({path:'/login'});
+            }
+        },
         handleSelect(key, keyPath) {
             console.log('keyPath',key, keyPath);
         },

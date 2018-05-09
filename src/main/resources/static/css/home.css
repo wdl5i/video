@@ -10,21 +10,23 @@ a,a:hover,a:focus {
     color: #fff;
 }
 
-
 /* 登录页 */
 .loginForm {
     width: 200px;
 }
 
 /* 主页 */
-
-/* header */
-/* .outerContainer ul[role='menubar'], .outerContainer ul[role='menubar'] > li {
-    background-color: rgba(36, 47, 66, .95)!important;
+#app {
+    min-width: 1200px;
 }
-.innerContainer .el-aside, .innerContainer ul[role='menubar'], .innerContainer ul[role='menubar'] > li, .innerContainer ul[role='menubar'] > li > div {
-    background-color: rgba(50, 65, 87, .95)!important;
-} */
+/* header */
+.outerContainer {
+    background-color: rgba(84,92,100,1);
+}
+.outerContainer > ul[role='menubar'] {
+    min-width: 550px;
+    width: 50%;
+}
 .el-header {
     padding: 0;
     padding-left: 200px;
@@ -80,4 +82,31 @@ li[role='menuitem'] > a {
 }
 .el-menu {
     border: none;
+}
+
+/* 用户相关 */
+.user-name{
+    margin-left: 10px;
+    position: absolute;
+    top: 20px;
+    right: 25px;
+}
+.user-avator{
+    margin-left: 20px;
+    position: absolute;
+    top: 10px;
+    right: 100px;
+}
+.user-avator img{
+    display: block;
+    width:40px;
+    height:40px;
+    border-radius: 50%;
+}
+.el-dropdown-link{
+    color: #fff;
+    cursor: pointer;
+}
+.el-dropdown-menu__item{
+    text-align: center;
 }
