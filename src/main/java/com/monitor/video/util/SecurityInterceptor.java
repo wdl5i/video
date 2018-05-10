@@ -49,7 +49,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
         return false;
     }
 
-    private Authority validateAuthType(Object handler)  {
+    private Authority validateAuthType(Object handler) {
         Authority authority = null;
         HandlerMethod hm = (HandlerMethod) handler;
         Class<?> clazz = hm.getBeanType();

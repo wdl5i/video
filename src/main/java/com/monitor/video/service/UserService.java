@@ -47,6 +47,7 @@ public class UserService extends AbstractService<User> {
                 dataResult.put("token", claimsStr);
                 dataResult.put("licensed", licensedNames);
                 dataResult.put("userId", user.getId());
+                dataResult.put("userName", user.getName());
                 restResult = RestResult.buildSuccessResult(dataResult);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
