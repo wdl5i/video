@@ -21,6 +21,7 @@ var Login = {
     },
     methods:{
         login:function(formName){
+            
             let _this = this;
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -40,6 +41,8 @@ var Login = {
                             localStorage.setItem("menuAuth",(data.content.licensed).join(","));
                             //设置用户ID的本地存储
                             localStorage.setItem("userId",(data.content.userId).toString());
+                            //设置用户ID的本地存储
+                            localStorage.setItem("loginUserName",(data.content.userName).toString());
                         }else{
                             console.log('用户不存在');
                             _this.$message.error('用户不存在或者密码错误');
