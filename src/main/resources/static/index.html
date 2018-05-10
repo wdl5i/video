@@ -34,7 +34,8 @@
                                 <div class="input_outer">
                                     <span class="us_uer"></span>
                                     <el-form-item prop="password">
-                                        <el-input v-model="userLogin.password" name="password" class="text" type="password" placeholder="请输入密码" clearable></el-input>
+                                        <el-input v-model="userLogin.password" name="password" class="text" type="password" placeholder="请输入密码" clearable
+                                        @keyup.enter.native="login('userLogin')"></el-input>
                                     </el-form-item> 
                                 </div>
                                 <div class="mb2">
