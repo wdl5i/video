@@ -20,7 +20,7 @@
     </delete>
 
     <select id="getGroupFacilities" resultType="com.monitor.video.vo.Facility">
-        SELECT f.id, f.name FROM facility as f
+        SELECT f.id, f.name, f.type FROM facility as f
         LEFT JOIN facility_grp as fg
         on fg.facility_id = f.id
         where fg.group_id = #{groupId} AND f.status = 1
