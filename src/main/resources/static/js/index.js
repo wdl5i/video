@@ -64,7 +64,7 @@ var Home = {
         let isUserManageShow = false, isFacilityManageShow = false, isGroupManageShow = false;
         let userId = 0;
         return {
-            activeIndex: '1',
+            activeIndex: '',
             isUserManageShow,
             isFacilityManageShow,
             isGroupManageShow,
@@ -119,7 +119,36 @@ var Home = {
                     _this.userId = userId;
                 }
             };
-            
+            let path = _this.$route.path;
+            let routeMsg = [
+                {
+                    path:'/home/monitor',
+                    index:'1'
+                },
+                {
+                    path:'/home/userManage',
+                    index:'2'
+                },
+                {
+                    path:'/home/auth',
+                    index:'3'
+                },
+                {
+                    path:'/home/facilityManage',
+                    index:'4'
+                },
+                {
+                    path:'/home/groupManage',
+                    index:'5'
+                },
+            ]
+            console.log('path',path);
+            $.each(routeMsg,function(i){
+                if(path == routeMsg[i].path){
+                    console.log('匹配为',path);
+                    _this.activeIndex = routeMsg[i].index;
+                }
+            })
         })
     }
 }
@@ -130,10 +159,9 @@ var monitor = {
         let groupList = [];
         let facilityList = [];
         return {
-            message: '这里是实时监控的页面',
             groupList,
             facilityList,
-            defaultId:'10000',
+            defaultId:'',
             loginUserId:1,
             isFull:true,
             cssObj:{}
