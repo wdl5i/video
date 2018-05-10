@@ -192,14 +192,9 @@ var monitor = {
                     let contentList = data.content;
                     if(contentList.length !== 0){
                         _this.groupList = [];
-                        $.each(contentList,function(i){
-                            //设置默认选中设备组
-                            if(contentList[i].orderNum && (contentList[i].orderNum < parseInt(_this.defaultId))){
-                                _this.defaultId = (contentList[i].orderNum).toString();
-                            }else {
-                                _this.defaultId = contentList[i].id.toString();
-                            }
-
+                        //设置默认选中设备组,默认第一个
+                        _this.defaultId = (contentList[0].id).toString();
+                        $.each(contentList,function(i){         
                             _this.groupList.push({
                                 id:contentList[i].id,
                                 name:contentList[i].name,
