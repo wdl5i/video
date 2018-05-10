@@ -19,7 +19,7 @@
     <template id="login">
         <div style="width: 100%;height: 100%;">
             <div class="loginContainer demo-1">
-                <div class="content">
+                <div class="">
                     <div id="large-header" class="large-header">
                         <!-- <canvas id="demo-canvas"></canvas> -->
                         <div class="logo_box">
@@ -58,25 +58,25 @@
                         <el-menu-item index="1">
                             <router-link to="/home/monitor">实时监控</router-link>
                         </el-menu-item>
-                        <el-menu-item index="2" v-show="isUserManageShow == true">
-                            <router-link to="/home/userManage">用户管理</router-link>
-                        </el-menu-item>
-                        <el-menu-item index="3" v-show="userId == 1">
-                            <router-link to="/home/auth">用户授权</router-link>
-                        </el-menu-item>
                         <el-menu-item index="4" v-show="isFacilityManageShow == true">
                             <router-link to="/home/facilityManage">设备管理</router-link>
                         </el-menu-item>
                         <el-menu-item index="5" v-show="isGroupManageShow == true">
                             <router-link to="/home/groupManage">设备组管理</router-link>
                         </el-menu-item>
+                        <el-menu-item index="2" v-show="isUserManageShow == true">
+                            <router-link to="/home/userManage">用户管理</router-link>
+                        </el-menu-item>
+                        <el-menu-item index="3" v-show="userId == 1">
+                            <router-link to="/home/auth">用户授权</router-link>
+                        </el-menu-item>
                     </el-menu>
                     <!-- 用户头像 -->
-                    <div class="user-avator"><img src="img/img.jpg"></div>
+                    <div class="user-avator"><img src="img/user.png"></div>
                     <!-- 用户名下拉菜单 -->
                     <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                         <span class="el-dropdown-link">
-                            {{userName}} <i class="el-icon-caret-bottom"></i>
+                            {{username}} <i class="el-icon-caret-bottom"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <!-- <a href="#" target="_blank">
@@ -91,17 +91,6 @@
                 </div>
             </div>
             <router-view></router-view>
-
-
-            <!-- <el-container>
-                <el-header class="outerContainer">
-                    
-                    
-                </el-header>
-                <el-main>
-                    
-                </el-main>
-            </el-container>    -->
         </div>
     </template>
 
@@ -123,8 +112,12 @@
             </div>
             <div class="rightMain" >
                 <div class="content">
-                    <div class="facilityBox">
-                        <el-button :key="facilityList.id" type="primary" size="small" plain v-for="facilityList in facilityList">{{ facilityList.name }}</el-button>
+                    <div class="facilityArea">
+                        <div class="facilityBox" v-for="facilityList in facilityList">
+                            <span :class="'facilityType' + facilityList.type"></span>
+                            <el-button :key="facilityList.id" type="primary" size="small" plain>{{ facilityList.name }}</el-button>
+                        </div>
+                        
                     </div>
                     <div class="crumbs">
                         <el-breadcrumb separator="/">
@@ -132,7 +125,7 @@
                         </el-breadcrumb>
                     </div>
                     <div class="videoBox">
-                        <video></video>
+                        <video autoplay></video>
                     </div>
                 </div>
             </div>
@@ -224,7 +217,9 @@
                 <el-table :data="facilityList" stripe border style="width: 100%">
                     <el-table-column prop="name" label="设备名称" width="150"></el-table-column>
                     <el-table-column prop="ipAddr" label="IP地址" width="150"></el-table-column>
-                    <el-table-column prop="port" label="端口" width="100"></el-table-column> 
+                    <el-table-column prop="port" label="端口" width="100"></el-table-column>
+                    <el-table-column prop="type" label="类型" width="100"></el-table-column>
+                    <el-table-column prop="orderNum" label="序号" width="100"></el-table-column>
                     <el-table-column prop="serial" label="Serial"></el-table-column>
                     <el-table-column prop="option" label="操作" width="180">
                         <template slot-scope="scope">
@@ -254,6 +249,15 @@
                     <el-form-item label="设备Serial" :label-width="formLabelWidth" prop="serial">
                         <el-input v-model="facilityInfo.serial" placeholder="请输入设备serial" clearable></el-input>
                     </el-form-item>
+                    <el-form-item label="设备类型" :label-width="formLabelWidth" prop="type">
+                        <el-select v-model="facilityInfo.type" placeholder="请选择" @change="optionChange">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="设备排序号" :label-width="formLabelWidth" prop="order">
+                        <el-input v-model="facilityInfo.orderNum" placeholder="请输入设备排序号,可填小数" clearable></el-input>
+                    </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -277,7 +281,8 @@
                     <el-button type="primary" size="small" icon="delete" plain @click="dialogFormVisible = true;isGroupAdd = true" v-show="isGroupManageAddShow == true">添加设备组</el-button>
                 </div>
                 <el-table :data="groupList" stripe border style="width: 100%">
-                    <el-table-column prop="name" label="设备组名称"></el-table-column>
+                    <el-table-column prop="name" label="设备组名称" width="150"></el-table-column>
+                    <el-table-column prop="orderNum" label="序号"></el-table-column>
                     <el-table-column prop="facilityId" label="关联设备" width="100">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary" @click="getGroupFacilities(scope.row.id);dialogFacilityFormVisible = true">查看</el-button>
@@ -301,6 +306,9 @@
                 <el-form :model="groupInfo" status-icon :rules="rules" ref="groupInfo">
                     <el-form-item label="设备组名称" :label-width="formLabelWidth" prop="name">
                         <el-input v-model="groupInfo.name" placeholder="请输入设备组名称" clearable></el-input>
+                    </el-form-item>
+                    <el-form-item label="设备排序号" :label-width="formLabelWidth" prop="order">
+                        <el-input v-model="groupInfo.orderNum" placeholder="请输入设备排序号,可填小数" clearable></el-input>
                     </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">

@@ -21,6 +21,7 @@ var Login = {
     },
     methods:{
         login:function(formName){
+            
             let _this = this;
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -40,6 +41,8 @@ var Login = {
                             localStorage.setItem("menuAuth",(data.content.licensed).join(","));
                             //设置用户ID的本地存储
                             localStorage.setItem("userId",(data.content.userId).toString());
+                            //设置用户ID的本地存储
+                            localStorage.setItem("loginUserName",(data.content.userName).toString());
                         }else{
                             console.log('用户不存在');
                             _this.$message.error('用户不存在或者密码错误');
@@ -130,21 +133,19 @@ var monitor = {
             message: '这里是实时监控的页面',
             groupList,
             facilityList,
-            defaultId:'10000'
+            defaultId:'10000',
+            loginUserId:1
         }
     },
     methods:{
-        getGroupList:function(pageNum, pageSize){
+        getGroupList:function(){
             // console.log("this",this);
             let _this = this;
-            let getGroupUrl = '/group/page/'+pageNum+'/'+pageSize;
-            let params = {
-
-            };
-            vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
+            let getGroupUrl = '/group/userGroups/'+this.loginUserId;
+            vm.getData(getGroupUrl,'GET','', function(data){
                 console.log(data);
                 if(data.content){
-                    let contentList = data.content.list;
+                    let contentList = data.content;
                     if(contentList.length !== 0){
                         _this.groupList = [];
                         $.each(contentList,function(i){
@@ -152,7 +153,7 @@ var monitor = {
                             if(contentList[i].orderNum && (contentList[i].orderNum < parseInt(_this.defaultId))){
                                 _this.defaultId = (contentList[i].orderNum).toString();
                             }else {
-                                _this.defaultId = _this.defaultId;
+                                _this.defaultId = contentList[i].id;
                             }
 
                             _this.groupList.push({
@@ -222,8 +223,14 @@ var monitor = {
             }else{
                 console.log('mounted',userToken,vm);
                 vm.token = userToken;
+                let userId = parseInt(localStorage.getItem("userId"));
+                if(userId == null){
+                    console.log('userid 不存在');
+                }else{
+                    _this.loginUserId = userId;
+                }
             };
-            _this.getGroupList(1,10000);
+            _this.getGroupList();
         })
     }
 }
@@ -540,7 +547,9 @@ var facilityManage = {
             ipAddr:'',
             port:'',
             type:1,
-            serial:''
+            serial:'',
+            type:1,
+            orderNum:1
         }
         let currentPage = 1;
         let total = 10000;
@@ -605,6 +614,20 @@ var facilityManage = {
             currentPage,
             currentSize,
             total,
+            options:[
+                {
+                    label:'类型1',
+                    value:1
+                },
+                {
+                    label:'类型2',
+                    value:2
+                },
+                {
+                    label:'类型3',
+                    value:3
+                }
+            ],
             rules: {
                 name: [
                   { required: true, message: '请输入设备名称', trigger: 'blur' },
@@ -617,6 +640,9 @@ var facilityManage = {
                 ],
                 serial: [
                   { required: true, validator: checkSerial, trigger: 'blur' }
+                ],
+                type: [
+                    { required: true, message: '请选择设备类型', trigger: 'blur' }
                 ]
             }
         }
@@ -631,6 +657,9 @@ var facilityManage = {
             console.log(`当前页: ${val}`);
             this.currentPage = val;
             this.getFacilityList(val,this.currentSize);
+        },
+        optionChange(val){
+            console.log(`选中了: ${val}`);
         },
         //设备增删改查
         getFacilityList:function(pageNum, pageSize){
@@ -661,7 +690,9 @@ var facilityManage = {
                         "ipAddr":this.facilityInfo.ipAddr,
                         "port":this.facilityInfo.port,
                         "type":this.facilityInfo.type,
-                        "serial":this.facilityInfo.serial
+                        "serial":this.facilityInfo.serial,
+                        "type":this.facilityInfo.type,
+                        "orderNum":this.facilityInfo.orderNum,
                     }
                     vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
                         console.log(data);
@@ -686,12 +717,15 @@ var facilityManage = {
             }); 
         },
         facilityUpdate:function(facilityId,facility){
+            console.log('facility',facility);
             this.currentFacilityId = facilityId;
             //默认填入修改设备信息
             this.facilityInfo.name = facility.name;
             this.facilityInfo.ipAddr = facility.ipAddr;
             this.facilityInfo.port = facility.port;
             this.facilityInfo.serial = facility.serial;
+            this.facilityInfo.type = facility.type;
+            this.facilityInfo.orderNum = facility.orderNum;
         },
         facilityComfirmUpdate:function(formName){
             let _this = this;
@@ -705,7 +739,9 @@ var facilityManage = {
                         "ipAddr":this.facilityInfo.ipAddr,
                         "port":this.facilityInfo.port,
                         "type":this.facilityInfo.type,
-                        "serial":this.facilityInfo.serial
+                        "serial":this.facilityInfo.serial,
+                        "type":this.facilityInfo.type,
+                        "orderNum":this.facilityInfo.orderNum,
                     }
                     vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
                         console.log(data);
@@ -797,7 +833,8 @@ var groupManage = {
         let groupList = [], currentGroupId = null;
         let isGroupManageAddShow =false, isGroupManageDelShow = false, isGroupManageUpdateShow = false;
         let groupInfo = {
-            name:''
+            name:'',
+            orderNum:1
         };
         let currentPage = 1;
         let total = 10000;
@@ -845,9 +882,7 @@ var groupManage = {
             // console.log("this",this);
             let _this = this;
             let getGroupUrl = '/group/page/'+pageNum+'/'+pageSize;
-            let params = {
-                // 'name':'wang'
-            };
+            let params = {};
             vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
@@ -935,7 +970,8 @@ var groupManage = {
                     _this.dialogFormVisible = false;
                     let addUrl = '/group'
                     let params = {
-                        "name":this.groupInfo.name
+                        "name":this.groupInfo.name,
+                        "orderNum":this.groupInfo.orderNum
                     }
                     vm.getData(addUrl,'POST',JSON.stringify(params),function(data){
                         console.log(data);
@@ -960,10 +996,10 @@ var groupManage = {
             });
         },
         groupUpdate:function(groupId,group){
-            $("#groupComfirmUpdate").css({'display':'block'});
             this.currentGroupId = groupId;
             //默认填入修改用户信息
             this.groupInfo.name = group.name;
+            this.groupInfo.orderNum = group.orderNum;
         },
         groupComfirmUpdate:function(formName){
             let _this = this;
@@ -973,7 +1009,8 @@ var groupManage = {
                     let updateUrl = '/group'
                     let params = {
                         "id":this.currentGroupId,
-                        "name":this.groupInfo.name
+                        "name":this.groupInfo.name,
+                        "orderNum":this.groupInfo.orderNum
                     }
                     vm.getData(updateUrl,'PUT',JSON.stringify(params),function(data){
                         console.log(data);
