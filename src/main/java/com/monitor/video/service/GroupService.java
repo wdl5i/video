@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -35,9 +37,11 @@ public class GroupService extends AbstractService<Group> {
         return restResult;
     }
 
+    @Transactional
     public RestResult addUserGroup(String userId, String groupId) {
         RestResult restResult;
         try {
+            dao.deleteUserGroup(userId, groupId);
             dao.addUserGroup(userId, groupId);
             restResult = RestResult.buildSuccessResult();
         } catch (Exception e) {
@@ -71,9 +75,11 @@ public class GroupService extends AbstractService<Group> {
         return restResult;
     }
 
+    @Transactional
     public RestResult addGroupFacility(String groupId, String facilityId) {
         RestResult restResult;
         try {
+            dao.deleteGroupFacility(groupId, facilityId);
             dao.addGroupFacility(groupId, facilityId);
             restResult = RestResult.buildSuccessResult();
         } catch (Exception e) {
