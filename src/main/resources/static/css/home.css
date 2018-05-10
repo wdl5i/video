@@ -309,6 +309,14 @@ video {
     width: 100%;
     height: 600px;
 }
+.fullScreen {
+    text-align: right;
+    padding: 5px;
+}
+.fullScreen > i {
+    color: #606266;
+    cursor: pointer;
+}
 .facilityBox {
     display: inline-block;
     margin-right: 20px;

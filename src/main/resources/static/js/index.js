@@ -134,10 +134,54 @@ var monitor = {
             groupList,
             facilityList,
             defaultId:'10000',
-            loginUserId:1
+            loginUserId:1,
+            isFull:true,
+            cssObj:{}
         }
     },
     methods:{
+        goFull(){
+            this.isFull = false;
+            let windowWidth = $(window).width();
+            let windowHeight = $(window).height();
+            console.log('window',windowWidth,windowHeight);
+            this.cssObj.width = $(".videoBox").css('width');
+            this.cssObj.height = $(".videoBox").css('height');
+            this.cssObj.position = $(".videoBox").css('position');
+            this.cssObj.top = $(".videoBox").css('top');
+            this.cssObj.left = $(".videoBox").css('left');
+            this.cssObj.zindex = $(".videoBox").css('z-index');
+            this.cssObj.margintop = $(".videoBox").css('margin-top');
+            
+            $(".videoBox").css({
+                "width":windowWidth,
+                "height":windowHeight,
+                "position":'fixed',
+                "top":"0",
+                "left":"0",
+                "z-index":1000,
+                "margin-top":'0'
+            });
+            $("video").css({
+                "height":windowHeight-26,
+            })
+
+        },
+        backFull(){
+            this.isFull = true;
+            $(".videoBox").css({
+                "width":this.cssObj.width,
+                "height":this.cssObj.height,
+                "position":this.cssObj.position,
+                "top":this.cssObj.top,
+                "left":this.cssObj.left,
+                "z-index":this.cssObj.zindex,
+                "margin-top":this.cssObj.margintop
+            });
+            $("video").css({
+                "height":600,
+            })
+        },
         getGroupList:function(){
             // console.log("this",this);
             let _this = this;
@@ -153,7 +197,7 @@ var monitor = {
                             if(contentList[i].orderNum && (contentList[i].orderNum < parseInt(_this.defaultId))){
                                 _this.defaultId = (contentList[i].orderNum).toString();
                             }else {
-                                _this.defaultId = contentList[i].id;
+                                _this.defaultId = contentList[i].id.toString();
                             }
 
                             _this.groupList.push({

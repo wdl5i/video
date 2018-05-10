@@ -127,6 +127,10 @@
                         </el-breadcrumb>
                     </div>
                     <div class="videoBox">
+                        <div class="fullScreen">
+                            <i class="el-icon-plus" v-show="isFull == true" @click="goFull()" title="全屏显示"></i> 
+                            <i class="el-icon-minus" v-show="isFull == false" @click="backFull()" title="取消全屏"></i> 
+                        </div>
                         <video autoplay></video>
                     </div>
                 </div>
