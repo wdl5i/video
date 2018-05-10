@@ -10,40 +10,64 @@
 </head>
 <body>
     <div id="app">
-        <router-view></router-view>
+        <div class="wrapper">
+            <router-view></router-view>
+        </div>
     </div>
 
     <!-- 登录页模板 -->
     <template id="login">
-        <div>
-            <p>登录页</p>
-            <form class="loginForm">
-                <el-input name="userName" placeholder="请输入用户名" clearable></el-input>
-                <el-input name="password" placeholder="请输入密码" clearable></el-input>
-                <el-button type="primary" @click="login('/user/login')">登录</el-button>
-            </form>
+        <div style="width: 100%;height: 100%;">
+            <div class="loginContainer demo-1">
+                <div class="content">
+                    <div id="large-header" class="large-header">
+                        <!-- <canvas id="demo-canvas"></canvas> -->
+                        <div class="logo_box">
+                            <h3>欢迎你</h3>
+                            <el-form :model="userLogin" :rules="rules" ref="userLogin">
+                                <div class="input_outer">
+                                    <span class="u_user"></span>
+                                    <el-form-item prop="userName">
+                                        <el-input v-model="userLogin.userName" name="userName" class="text" type="text" placeholder="请输入用户名" clearable></el-input>
+                                    </el-form-item>
+                                </div>
+                                <div class="input_outer">
+                                    <span class="us_uer"></span>
+                                    <el-form-item prop="password">
+                                        <el-input v-model="userLogin.password" name="password" class="text" type="password" placeholder="请输入密码" clearable></el-input>
+                                    </el-form-item> 
+                                </div>
+                                <div class="mb2">
+                                    <el-button class="act-but submit" type="primary" @click="login('userLogin')">登录</el-button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </template>
 
     <!-- 主页模板 -->
     <template id="home">
         <div>
-            <el-container>
-                <el-header class="outerContainer">
+            <div class="header">
+                <div class="logo"></div>
+                <div class="header-right">
                     <el-menu :default-active="activeIndex" class="el-menu-demo" @select="handleSelect" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-                        <el-menu-item index="1" @click="showAside = true;getGroupList(1,10000);">
+                        <el-menu-item index="1">
                             <router-link to="/home/monitor">实时监控</router-link>
                         </el-menu-item>
-                        <el-menu-item index="2" v-show="isUserManageShow == true" @click="showAside = false">
+                        <el-menu-item index="2" v-show="isUserManageShow == true">
                             <router-link to="/home/userManage">用户管理</router-link>
                         </el-menu-item>
-                        <el-menu-item index="3" v-show="userId == 1" @click="showAside = false">
+                        <el-menu-item index="3" v-show="userId == 1">
                             <router-link to="/home/auth">用户授权</router-link>
                         </el-menu-item>
-                        <el-menu-item index="4" v-show="isFacilityManageShow == true" @click="showAside = false">
+                        <el-menu-item index="4" v-show="isFacilityManageShow == true">
                             <router-link to="/home/facilityManage">设备管理</router-link>
                         </el-menu-item>
-                        <el-menu-item index="5" v-show="isGroupManageShow == true" @click="showAside = false">
+                        <el-menu-item index="5" v-show="isGroupManageShow == true">
                             <router-link to="/home/groupManage">设备组管理</router-link>
                         </el-menu-item>
                     </el-menu>
@@ -55,47 +79,69 @@
                             {{userName}} <i class="el-icon-caret-bottom"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <a href="#" target="_blank">
+                            <!-- <a href="#" target="_blank">
                                 <el-dropdown-item>我的消息</el-dropdown-item>
                             </a>
                             <a href="#" target="_blank">
                                 <el-dropdown-item>修改密码</el-dropdown-item>
-                            </a>
-                            <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
+                            </a> -->
+                            <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
+                </div>
+            </div>
+            <router-view></router-view>
+
+
+            <!-- <el-container>
+                <el-header class="outerContainer">
+                    
+                    
                 </el-header>
-                <el-container class="innerContainer">
-                    <el-aside v-show="showAside == true" width="200px">
-                        <el-menu @open="getThisFacilities" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-                            <el-submenu :key="groupInfo.id" :index="''+groupInfo.id" v-for="(groupInfo,groupInfoIndex) in groupList" 
-                            >
-                                <template slot="title">
-                                    <i class="el-icon-menu"></i>
-                                    <span>{{groupInfo.name}}</span>
-                                </template>
-                                <el-menu-item :key="facilityInfo.id" :index="groupInfoIndex+''+facilityInfo.id" v-for="facilityInfo in groupInfo.groupFacilityList">{{facilityInfo.name}}</el-menu-item>
-                            </el-submenu>
-                      </el-menu>
-                    </el-aside>
-                    <el-main>
-                        <router-view></router-view>
-                    </el-main>
-                </el-container>
-            </el-container>       
+                <el-main>
+                    
+                </el-main>
+            </el-container>    -->
         </div>
     </template>
 
-    <!-- 主页模板 -->
+    <!-- 实时监控模板 -->
     <template id="monitor">
-        <div>
-            <p style="color: black">{{message}}</p>
+        <div class="mainContainer">
+            <div class="sidebar" >
+                <el-menu @select="getThisFacilities" :default-active="defaultId" class="sidebar-el-menu" background-color="rgba(84,92,100,1)"
+                text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)">
+                    <template v-for="(groupInfo,groupInfoIndex) in groupList">
+                        <template>
+                            <el-menu-item :index="''+groupInfo.id" :key="groupInfo.id">
+                                <i class="el-icon-menu"></i>
+                                <span slot="title">{{ groupInfo.name }}</span>
+                            </el-menu-item>
+                        </template>
+                    </template>
+                </el-menu>
+            </div>
+            <div class="rightMain" >
+                <div class="content">
+                    <div class="facilityBox">
+                        <el-button :key="facilityList.id" type="primary" size="small" plain v-for="facilityList in facilityList">{{ facilityList.name }}</el-button>
+                    </div>
+                    <div class="crumbs">
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><i class="el-icon-view"></i>视频窗口</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+                    <div class="videoBox">
+                        <video></video>
+                    </div>
+                </div>
+            </div>
         </div>
     </template>
 
     <!-- 用户管理模板 -->
     <template id="userManage">
-        <div>
+        <div class="mainContainer content">
             <div class="crumbs">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item><i class="el-icon-tickets"></i>用户列表</el-breadcrumb-item>
@@ -165,7 +211,7 @@
 
     <!-- 设备管理模板 -->
     <template id="facilityManage">
-        <div>
+        <div class="mainContainer content">
             <div class="crumbs">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item><i class="el-icon-tickets"></i>设备列表</el-breadcrumb-item>
@@ -220,7 +266,7 @@
     
     <!-- 设备组管理模板 -->
     <template id="groupManage">
-        <div>
+        <div class="mainContainer content">
             <div class="crumbs">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item><i class="el-icon-tickets"></i>设备组列表</el-breadcrumb-item>
@@ -277,7 +323,7 @@
 
     <!-- 用户授权模板 -->
     <template id="auth">
-        <div>
+        <div class="mainContainer content">
             <div class="crumbs">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item><i class="el-icon-tickets"></i>设备列表</el-breadcrumb-item>

@@ -3,31 +3,54 @@
 /* 创建路由组件 */
 var Login = {
     template: '#login',
-    methods:{
-        login:function(url){
-            let user = $("input[name='userName']").val();
-            let psd = $("input[name='password']").val();
-            let params = {
-                userName:user,
-                password:psd
+    data(){
+        return {
+            userLogin:{
+                userName:'',
+                password:''
+            },
+            rules: {
+                userName: [
+                  { required: true, message: '请输入用户名称', trigger: 'blur' },
+                ],
+                password: [
+                  { required: true, message: '请输入用户密码', trigger: 'blur' },
+                ]
             }
-            vm.getData(url,'POST',params,function(data){
-                console.log(data);
-                if(data.message == 'OK'){
-                    console.log('登录成功',vm);
-                    router.push({path:'/home/monitor'}); //登录成功跳转至主页
-                    //设置用户信息的本地存储
-                    localStorage.setItem("userToken",JSON.stringify(data.content.token));
-                    //设置用户菜单权限的本地存储
-                    localStorage.setItem("menuAuth",(data.content.licensed).join(","));
-                    //设置用户ID的本地存储
-                    localStorage.setItem("userId",(data.content.userId).toString());
-                }else{
-                    console.log('用户不存在');
+        }
+    },
+    methods:{
+        login:function(formName){
+            let _this = this;
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    let loginUrl = '/user/login';
+                    let params = {
+                        userName:this.userLogin.userName,
+                        password:this.userLogin.password
+                    }
+                    vm.getData(loginUrl,'POST',params,function(data){
+                        console.log(data);
+                        if(data.message == 'OK'){
+                            console.log('登录成功',vm);
+                            router.push({path:'/home/monitor'}); //登录成功跳转至主页
+                            //设置用户信息的本地存储
+                            localStorage.setItem("userToken",JSON.stringify(data.content.token));
+                            //设置用户菜单权限的本地存储
+                            localStorage.setItem("menuAuth",(data.content.licensed).join(","));
+                            //设置用户ID的本地存储
+                            localStorage.setItem("userId",(data.content.userId).toString());
+                        }else{
+                            console.log('用户不存在');
+                            _this.$message.error('用户不存在或者密码错误');
+                        }
+                    },function(err){
+                        console.log(err);
+                    },false,false) 
+                } else {
+                  return false;
                 }
-            },function(err){
-                console.log(err);
-            },false,false)
+            }); 
         },
         
     },
@@ -37,22 +60,18 @@ var Home = {
     data:function(){
         let isUserManageShow = false, isFacilityManageShow = false, isGroupManageShow = false;
         let userId = 0;
-        let showAside = true;
-        let groupList = [];
         return {
             activeIndex: '1',
             isUserManageShow,
             isFacilityManageShow,
             isGroupManageShow,
             userId,
-            showAside,
-            groupList,
             userName:'admin'
         }
     },
     computed:{
         username(){
-            let username = localStorage.getItem('ms_username');
+            let username = localStorage.getItem('loginUserName');
             return username ? username : this.userName;
         }
     },
@@ -66,57 +85,8 @@ var Home = {
         },
         handleSelect(key, keyPath) {
             console.log('keyPath',key, keyPath);
-        },
-        getGroupList:function(pageNum, pageSize){
-            // console.log("this",this);
-            let _this = this;
-            let getGroupUrl = '/group/page/'+pageNum+'/'+pageSize;
-            let params = {
-
-            };
-            vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
-                console.log(data);
-                if(data.content){
-                    let contentList = data.content.list;
-                    if(contentList.length !== 0){
-                        _this.groupList = [];
-                        $.each(contentList,function(i){
-                            _this.groupList.push({
-                                id:contentList[i].id,
-                                name:contentList[i].name,
-                                orderNum:contentList[i].orderNum,
-                                status:contentList[i].status,
-                                groupFacilityList:[{name:'当下无设备',id:-1}]
-                            })
-                        })
-                        console.log("group data",_this.groupList);
-                    }
-                }else{
-                    console.log("no group data");
-                }
-            },function(err){
-                console.log(err);
-            },true,true)
-        },
-        getThisFacilities:function(key,keyPath){
-            // console.log('dddddddddddddddddd',key,keyPath);
-            let _this = this;
-            let groupId = parseInt(key);
-            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
-            vm.getData(groupFacilityUrl,'GET','', function(data){
-                console.log(data);
-                if(data.message == 'OK' && data.content.length !== 0){
-                    $.each(_this.groupList,function(i){
-                        if(_this.groupList[i].id == groupId){
-                            _this.groupList[i].groupFacilityList = data.content;
-                            //console.log('groupFacilityList', _this.groupList[i].groupFacilityList);
-                        }
-                    })
-                }
-            },function(err){
-                console.log(err);
-            },true,true)
-        },
+            this.activeIndex = key;
+        }, 
     },
     mounted:function(){
         let _this = this;
@@ -146,6 +116,7 @@ var Home = {
                     _this.userId = userId;
                 }
             };
+            
         })
     }
 }
@@ -153,13 +124,93 @@ var Home = {
 var monitor = {
     template: '#monitor',
     data:function(){
-        
+        let groupList = [];
+        let facilityList = [];
         return {
-            message: '这里是实时监控的页面'
+            message: '这里是实时监控的页面',
+            groupList,
+            facilityList,
+            defaultId:'10000'
         }
     },
     methods:{
-        
+        getGroupList:function(pageNum, pageSize){
+            // console.log("this",this);
+            let _this = this;
+            let getGroupUrl = '/group/page/'+pageNum+'/'+pageSize;
+            let params = {
+
+            };
+            vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.content){
+                    let contentList = data.content.list;
+                    if(contentList.length !== 0){
+                        _this.groupList = [];
+                        $.each(contentList,function(i){
+                            //设置默认选中设备组
+                            if(contentList[i].orderNum && (contentList[i].orderNum < parseInt(_this.defaultId))){
+                                _this.defaultId = (contentList[i].orderNum).toString();
+                            }else {
+                                _this.defaultId = _this.defaultId;
+                            }
+
+                            _this.groupList.push({
+                                id:contentList[i].id,
+                                name:contentList[i].name,
+                                orderNum:contentList[i].orderNum || 1000,
+                                status:contentList[i].status,
+                            })
+                        })
+                        console.log("group data",_this.groupList);
+                    }
+                    _this.getDefaultFacilities(_this.defaultId);
+                }else{
+                    console.log("no group data");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        getThisFacilities:function(key,keyPath){
+            // console.log('test',key,keyPath);
+            let _this = this;
+            let groupId = parseInt(key);
+            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
+            vm.getData(groupFacilityUrl,'GET','', function(data){
+                console.log(data);
+                _this.facilityList = [];
+                if(data.message == 'OK' && data.content.length !== 0){
+                    _this.facilityList = data.content;
+                }else{
+                    _this.facilityList.push({
+                        name:'无设备',
+                        id:-1
+                    })
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
+        },
+        getDefaultFacilities:function(groupId){
+            let _this = this;
+            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
+            vm.getData(groupFacilityUrl,'GET','', function(data){
+                console.log(data);
+                _this.facilityList = [];
+                if(data.message == 'OK' && data.content.length !== 0){
+                    _this.facilityList = data.content;
+                }else{
+                    _this.facilityList.push({
+                        name:'无设备',
+                        id:-1
+                    })
+                }
+                console.log("facility data",_this.facilityList);
+            },function(err){
+                console.log(err);
+            },true,true)
+        }
     },
     mounted:function(){
         let _this = this;
@@ -172,6 +223,7 @@ var monitor = {
                 console.log('mounted',userToken,vm);
                 vm.token = userToken;
             };
+            _this.getGroupList(1,10000);
         })
     }
 }
@@ -1383,13 +1435,5 @@ var vm = new Vue({
                 }
             }
         }
-    },
-    mounted:function(){
-        Vue.nextTick(function(){
-            //获取高度
-            let bodyHeight = $('body').height();
-            console.log("bodyHeight",bodyHeight);
-            $(".innerContainer").css({"height":bodyHeight-60});
-        })
     }
 }).$mount("#app")
