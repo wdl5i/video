@@ -133,21 +133,19 @@ var monitor = {
             message: '这里是实时监控的页面',
             groupList,
             facilityList,
-            defaultId:'10000'
+            defaultId:'10000',
+            loginUserId:1
         }
     },
     methods:{
-        getGroupList:function(pageNum, pageSize){
+        getGroupList:function(){
             // console.log("this",this);
             let _this = this;
-            let getGroupUrl = '/group/page/'+pageNum+'/'+pageSize;
-            let params = {
-
-            };
-            vm.getData(getGroupUrl,'POST',JSON.stringify(params), function(data){
+            let getGroupUrl = '/group/userGroups/'+this.loginUserId;
+            vm.getData(getGroupUrl,'GET','', function(data){
                 console.log(data);
                 if(data.content){
-                    let contentList = data.content.list;
+                    let contentList = data.content;
                     if(contentList.length !== 0){
                         _this.groupList = [];
                         $.each(contentList,function(i){
@@ -155,7 +153,7 @@ var monitor = {
                             if(contentList[i].orderNum && (contentList[i].orderNum < parseInt(_this.defaultId))){
                                 _this.defaultId = (contentList[i].orderNum).toString();
                             }else {
-                                _this.defaultId = _this.defaultId;
+                                _this.defaultId = contentList[i].id;
                             }
 
                             _this.groupList.push({
@@ -225,8 +223,14 @@ var monitor = {
             }else{
                 console.log('mounted',userToken,vm);
                 vm.token = userToken;
+                let userId = parseInt(localStorage.getItem("userId"));
+                if(userId == null){
+                    console.log('userid 不存在');
+                }else{
+                    _this.loginUserId = userId;
+                }
             };
-            _this.getGroupList(1,10000);
+            _this.getGroupList();
         })
     }
 }
