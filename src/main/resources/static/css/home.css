@@ -108,6 +108,13 @@ a,a:hover,a:focus {
 .text .el-input__suffix {
     top: 15px;
 }
+.input_outer {
+    background-color: rgb(40,62,85);
+}
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px rgb(40,62,85) inset;
+    -webkit-text-fill-color: #fff;
+}
 /*///*/
 .mb2{
 	margin-bottom: 20px

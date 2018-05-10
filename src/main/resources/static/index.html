@@ -28,7 +28,8 @@
                                 <div class="input_outer">
                                     <span class="u_user"></span>
                                     <el-form-item prop="userName">
-                                        <el-input v-model="userLogin.userName" name="userName" class="text" type="text" placeholder="请输入用户名" clearable></el-input>
+                                        <el-input v-model="userLogin.userName" name="userName" class="text" type="text" placeholder="请输入用户名" clearable
+                                        @keyup.enter.native="login('userLogin')"></el-input>
                                     </el-form-item>
                                 </div>
                                 <div class="input_outer">
