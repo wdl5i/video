@@ -202,6 +202,9 @@ var Home = {
                 if(menuAuth.indexOf('用户管理') !== -1){
                     _this.systemManageList[0].isShow = true;
                 }
+                if(menuAuth.indexOf('权限管理') !== -1){
+                    _this.systemManageList[1].isShow = true;
+                }
                 if(menuAuth.indexOf('设备管理') !== -1){
                     _this.facilityManageList[0].isShow = true;
                 }
