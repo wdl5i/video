@@ -278,7 +278,7 @@
                     </el-table-column>
                     <el-table-column prop="monitor" label="监控" width="100">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" @click="">监控<i class="el-icon-view el-icon--right"></i></el-button>
+                            <el-button size="mini" type="primary" @click="goMonitor()">监控<i class="el-icon-view el-icon--right"></i></el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -288,17 +288,28 @@
                     :current-page="currentPage" :page-sizes="[10, 20, 50, 100]"></el-pagination>
                 </div>
             </div>
+            <!-- 视频监控弹出框 -->
+            <el-dialog title="视频监控" top="10vh" width="60%" :visible.sync="dialogMonitorVisible" :close-on-click-modal="false">
+                <div class="videoBox">
+                    <div class="fullScreen">
+                        <i class="el-icon-plus" v-show="isFull == true" @click="goFull()" title="全屏显示"></i> 
+                        <i class="el-icon-minus" v-show="isFull == false" @click="backFull()" title="取消全屏"></i> 
+                    </div>
+                    <video autoplay></video>
+                </div>
+            </el-dialog>
+
             <!-- 设备添加修改对话框 -->
             <el-dialog title="设备添加" :visible.sync="dialogFormVisible">
                 <el-form :model="facilityInfo" status-icon :rules="rules" ref="facilityInfo">
                     <el-form-item label="设备名称" :label-width="formLabelWidth" prop="name">
                         <el-input v-model="facilityInfo.name" placeholder="请输入设备名称" clearable></el-input>
                     </el-form-item>
-                    <el-form-item label="IP地址" :label-width="formLabelWidth" prop="ipAddr">
-                        <el-input v-model="facilityInfo.ipAddr" placeholder="请输入设备IP" clearable></el-input>
+                    <el-form-item label="设备用户" :label-width="formLabelWidth" prop="userName">
+                        <el-input v-model="facilityInfo.userName" placeholder="请输入设备IP" clearable></el-input>
                     </el-form-item>
-                    <el-form-item label="设备端口" :label-width="formLabelWidth" prop="port">
-                        <el-input v-model="facilityInfo.port" placeholder="请输入设备端口" clearable></el-input>
+                    <el-form-item label="设备密码" :label-width="formLabelWidth" prop="password">
+                        <el-input v-model="facilityInfo.password" placeholder="请输入设备端口" clearable></el-input>
                     </el-form-item>
                     <el-form-item label="设备Serial" :label-width="formLabelWidth" prop="serial">
                         <el-input v-model="facilityInfo.serial" placeholder="请输入设备serial" clearable></el-input>

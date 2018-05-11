@@ -743,6 +743,7 @@ var facilityManage = {
             currentFacilityId,
             facilityInfo,
             dialogFormVisible: false,
+            dialogMonitorVisible:false,
             formLabelWidth: '120px',
             loading:true,
             isFacilityAdd:true,
@@ -752,6 +753,8 @@ var facilityManage = {
             currentPage,
             currentSize,
             total,
+            isFull:true,
+            cssObj:{},
             options:[
                 {
                     label:'类型1',
@@ -798,6 +801,51 @@ var facilityManage = {
         },
         optionChange(val){
             console.log(`选中了: ${val}`);
+        },
+        goMonitor(){
+            this.dialogMonitorVisible = true;
+        },
+        goFull(){
+            this.isFull = false;
+            let windowWidth = $(window).width();
+            let windowHeight = $(window).height();
+            console.log('window',windowWidth,windowHeight);
+            this.cssObj.width = $(".videoBox").css('width');
+            this.cssObj.height = $(".videoBox").css('height');
+            this.cssObj.position = $(".videoBox").css('position');
+            this.cssObj.top = $(".videoBox").css('top');
+            this.cssObj.left = $(".videoBox").css('left');
+            this.cssObj.zindex = $(".videoBox").css('z-index');
+            this.cssObj.margintop = $(".videoBox").css('margin-top');
+            
+            $(".videoBox").css({
+                "width":windowWidth,
+                "height":windowHeight,
+                "position":'fixed',
+                "top":"0",
+                "left":"0",
+                "z-index":1000,
+                "margin-top":'0'
+            });
+            $("video").css({
+                "height":windowHeight-26,
+            })
+
+        },
+        backFull(){
+            this.isFull = true;
+            $(".videoBox").css({
+                "width":this.cssObj.width,
+                "height":this.cssObj.height,
+                "position":this.cssObj.position,
+                "top":this.cssObj.top,
+                "left":this.cssObj.left,
+                "z-index":this.cssObj.zindex,
+                "margin-top":this.cssObj.margintop
+            });
+            $("video").css({
+                "height":600,
+            })
         },
         //设备增删改查
         getFacilityList:function(pageNum, pageSize){
