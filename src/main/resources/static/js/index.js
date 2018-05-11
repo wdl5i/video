@@ -412,7 +412,7 @@ var userManage = {
             phone:''
         };
         let currentPage = 1;
-        let total = 10000;
+        let total = 0;
         let currentSize = 10;
         let GroupList = [];
         let checkGroupList = [];
@@ -712,47 +712,17 @@ var facilityManage = {
         let isFacilityManageAddShow =false, isFacilityManageDelShow = false, isFacilityManageUpdateShow = false;
         let facilityInfo = {
             name:'',
-            ipAddr:'',
-            port:'',
+            userName:'',
+            password:'',
             type:1,
             serial:'',
             type:1,
             orderNum:1
         }
         let currentPage = 1;
-        let total = 10000;
+        let total = 0;
         let currentSize = 10;
         //设备相关验证规则
-        let checkIP = (rule, value, callback) => {
-            let ipReg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-            if (!value) {
-              return callback(new Error('请输入IP地址'));
-            } else {
-                return callback();
-            }
-            setTimeout(() => {
-              if (!ipReg.test(value)) {
-                callback(new Error('请输入正确的IP地址'));
-              } else {
-                return callback();
-              }
-            }, 100);
-        };
-        let checkPort = (rule, value, callback) => {
-            let portReg=/^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/;
-            if (!value) {
-              return callback(new Error('请输入端口'));
-            } else {
-                return callback();
-            }
-            setTimeout(() => {
-              if (!portReg.test(value)) {
-                callback(new Error('请输入正确的端口'));
-              } else {
-                return callback();
-              }
-            }, 100);
-        };
         let checkSerial = (rule, value, callback) => {
             //let serialReg=/^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/;
             if (!value) {
@@ -800,11 +770,11 @@ var facilityManage = {
                 name: [
                   { required: true, message: '请输入设备名称', trigger: 'blur' },
                 ],
-                ipAddr: [
-                  { required: true, validator: checkIP, trigger: 'blur' }
+                userName: [
+                  { required: true, message: '请输入设备用户名称', trigger: 'blur' }
                 ],
-                port: [
-                  { required: true, validator: checkPort, trigger: 'blur' }
+                password: [
+                  { required: true, message: '请输入设备用户密码', trigger: 'blur' }
                 ],
                 serial: [
                   { required: true, validator: checkSerial, trigger: 'blur' }
@@ -855,8 +825,8 @@ var facilityManage = {
                     let addUrl = '/facility'
                     let params = {
                         "name":this.facilityInfo.name,
-                        "ipAddr":this.facilityInfo.ipAddr,
-                        "port":this.facilityInfo.port,
+                        "userName":this.facilityInfo.userName,
+                        "password":this.facilityInfo.password,
                         "type":this.facilityInfo.type,
                         "serial":this.facilityInfo.serial,
                         "type":this.facilityInfo.type,
@@ -889,8 +859,8 @@ var facilityManage = {
             this.currentFacilityId = facilityId;
             //默认填入修改设备信息
             this.facilityInfo.name = facility.name;
-            this.facilityInfo.ipAddr = facility.ipAddr;
-            this.facilityInfo.port = facility.port;
+            this.facilityInfo.userName = facility.userName;
+            this.facilityInfo.password = facility.password;
             this.facilityInfo.serial = facility.serial;
             this.facilityInfo.type = facility.type;
             this.facilityInfo.orderNum = facility.orderNum;
@@ -904,8 +874,8 @@ var facilityManage = {
                     let params = {
                         "id":this.currentFacilityId,
                         "name":this.facilityInfo.name,
-                        "ipAddr":this.facilityInfo.ipAddr,
-                        "port":this.facilityInfo.port,
+                        "userName":this.facilityInfo.userName,
+                        "password":this.facilityInfo.password,
                         "type":this.facilityInfo.type,
                         "serial":this.facilityInfo.serial,
                         "type":this.facilityInfo.type,
@@ -1004,7 +974,7 @@ var groupManage = {
             orderNum:1
         };
         let currentPage = 1;
-        let total = 10000;
+        let total = 0;
         let currentSize = 10;
         let FacilityList = [];
         let checkFacilityList = [];
@@ -1278,7 +1248,7 @@ var auth = {
         let currentUserId = 0;
 
         let currentPage = 1;
-        let total = 10000;
+        let total = 0;
         let currentSize = 10;
         return {
             TreeData,
