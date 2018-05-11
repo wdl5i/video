@@ -34,7 +34,7 @@ var Login = {
                         console.log(data);
                         if(data.message == 'OK'){
                             console.log('登录成功',vm);
-                            router.push({path:'/home/monitor'}); //登录成功跳转至主页
+                            router.push({path:'/home/facilityManage'}); //登录成功跳转至主页
                             //设置用户信息的本地存储
                             localStorage.setItem("userToken",JSON.stringify(data.content.token));
                             //设置用户菜单权限的本地存储
@@ -61,22 +61,68 @@ var Login = {
 var Home = {
     template: '#home',
     data:function(){
-        let isUserManageShow = false, isFacilityManageShow = false, isGroupManageShow = false;
         let userId = 0;
         return {
             activeIndex: '',
-            isUserManageShow,
-            isFacilityManageShow,
-            isGroupManageShow,
+            defaultIndex1:'groupManage',
+            defaultIndex2:'userManage',
             userId,
-            userName:'admin'
+            userName:'admin',
+            showSidebar:'',
+            systemManageList:[
+                {
+                    name:'用户管理',
+                    index:'userManage',
+                    icon: 'el-icon-tickets',
+                    isShow:false,
+                    path:'/home/userManage'
+                },
+                {
+                    name:'用户授权',
+                    index:'auth',
+                    icon: 'el-icon-edit-outline',
+                    isShow:false,
+                    path:'/home/auth'
+                }
+            ],
+            facilityManageList:[
+                {
+                    name:'设备列表',
+                    index:'facilityManage',
+                    icon: 'el-icon-document',
+                    isShow:false,
+                    path:'/home/facilityManage'
+                },{
+                    name:'设备组列表',
+                    index:'groupManage',
+                    icon: 'el-icon-menu',
+                    isShow:false,
+                    path:'/home/groupManage'
+                }
+            ],
+            tagsList: []
         }
     },
     computed:{
         username(){
             let username = localStorage.getItem('loginUserName');
             return username ? username : this.userName;
+        },
+        onRoutes(){
+            console.log('path',this.$route.path);
+            return (this.$route.path.split('/'))[2];
+        },
+        showTags(){
+            return this.tagsList.length > 0;
         }
+    },
+    watch:{
+        $route(newValue, oldValue){
+            this.setTags(newValue);
+        }
+    },
+    created(){
+        this.setTags(this.$route);
     },
     methods:{
         // 用户名下拉菜单选择事件
@@ -88,8 +134,59 @@ var Home = {
         },
         handleSelect(key, keyPath) {
             console.log('keyPath',key, keyPath);
-            this.activeIndex = key;
-        }, 
+            this.activeIndex = key;  
+        },
+        goSystem(){
+            this.showSidebar = 'system';
+            this.defaultIndex2 = 'userManage';
+            router.push({path:'/home/userManage'});
+        },
+        goFacility(){
+            this.showSidebar = 'facility';
+            this.defaultIndex1 = 'groupManage';
+            router.push({path:'/home/facilityManage'});
+        },
+
+        // 标签相关
+        isActive(path) {
+            return path === this.$route.path;
+        },
+        // 关闭单个标签
+        closeTags(index) {
+            const delItem = this.tagsList.splice(index, 1)[0];
+            const item = this.tagsList[index] ? this.tagsList[index] : this.tagsList[index - 1];
+            if (item) {
+                delItem.path === this.$route.path && this.$router.push(item.path);
+            }else{
+                this.$router.push('/home/facilityManage');
+            }
+        },
+        // 关闭全部标签
+        closeAll(){
+            this.tagsList = [];
+            this.$router.push('/home/facilityManage');
+        },
+        // 关闭其他标签
+        closeOther(){
+            const curItem = this.tagsList.filter(item => {
+                return item.path === this.$route.path;
+            })
+            this.tagsList = curItem;
+        },
+        // 设置标签
+        setTags(route){
+            console.log("route",route,'this.tagsList',this.tagsList);
+            const isExist = this.tagsList.some(item => {
+                return item.path === route.path;
+            })
+            !isExist && this.tagsList.push({
+                title: route.meta.title,
+                path: route.path
+            })
+        },
+        handleTags(command){
+            command === 'other' ? this.closeOther() : this.closeAll();
+        }
     },
     mounted:function(){
         let _this = this;
@@ -103,13 +200,13 @@ var Home = {
                 vm.token = userToken;
                 let menuAuth = (localStorage.getItem("menuAuth")).split(",");
                 if(menuAuth.indexOf('用户管理') !== -1){
-                    _this.isUserManageShow = true;
+                    _this.systemManageList[0].isShow = true;
                 }
                 if(menuAuth.indexOf('设备管理') !== -1){
-                    _this.isFacilityManageShow = true;
+                    _this.facilityManageList[0].isShow = true;
                 }
                 if(menuAuth.indexOf('设备组管理') !== -1){
-                    _this.isGroupManageShow = true;
+                    _this.facilityManageList[1].isShow = true;
                 }
 
                 let userId = parseInt(localStorage.getItem("userId"));
@@ -122,192 +219,192 @@ var Home = {
             let path = _this.$route.path;
             let routeMsg = [
                 {
-                    path:'/home/monitor',
-                    index:'1'
-                },
-                {
                     path:'/home/userManage',
-                    index:'2'
+                    parentIndex:'2',
+                    Sidebar:'system'
                 },
                 {
                     path:'/home/auth',
-                    index:'3'
+                    parentIndex:'2',
+                    Sidebar:'system'
                 },
                 {
                     path:'/home/facilityManage',
-                    index:'4'
+                    parentIndex:'1',
+                    Sidebar:'facility'
                 },
                 {
                     path:'/home/groupManage',
-                    index:'5'
+                    parentIndex:'1',
+                    Sidebar:'facility'
                 },
             ]
-            console.log('path',path);
+            //console.log('path',path);
             $.each(routeMsg,function(i){
                 if(path == routeMsg[i].path){
-                    console.log('匹配为',path);
-                    _this.activeIndex = routeMsg[i].index;
+                    //console.log('匹配为',path);
+                    _this.activeIndex = routeMsg[i].parentIndex;
+                    _this.showSidebar = routeMsg[i].Sidebar;
                 }
             })
         })
     }
 }
 //实时监控
-var monitor = {
-    template: '#monitor',
-    data:function(){
-        let groupList = [];
-        let facilityList = [];
-        return {
-            groupList,
-            facilityList,
-            defaultId:'',
-            loginUserId:1,
-            isFull:true,
-            cssObj:{}
-        }
-    },
-    methods:{
-        goFull(){
-            this.isFull = false;
-            let windowWidth = $(window).width();
-            let windowHeight = $(window).height();
-            console.log('window',windowWidth,windowHeight);
-            this.cssObj.width = $(".videoBox").css('width');
-            this.cssObj.height = $(".videoBox").css('height');
-            this.cssObj.position = $(".videoBox").css('position');
-            this.cssObj.top = $(".videoBox").css('top');
-            this.cssObj.left = $(".videoBox").css('left');
-            this.cssObj.zindex = $(".videoBox").css('z-index');
-            this.cssObj.margintop = $(".videoBox").css('margin-top');
+// var monitor = {
+//     template: '#monitor',
+//     data:function(){
+//         let groupList = [];
+//         let facilityList = [];
+//         return {
+//             groupList,
+//             facilityList,
+//             defaultId:'',
+//             loginUserId:1,
+//             isFull:true,
+//             cssObj:{}
+//         }
+//     },
+//     methods:{
+//         goFull(){
+//             this.isFull = false;
+//             let windowWidth = $(window).width();
+//             let windowHeight = $(window).height();
+//             console.log('window',windowWidth,windowHeight);
+//             this.cssObj.width = $(".videoBox").css('width');
+//             this.cssObj.height = $(".videoBox").css('height');
+//             this.cssObj.position = $(".videoBox").css('position');
+//             this.cssObj.top = $(".videoBox").css('top');
+//             this.cssObj.left = $(".videoBox").css('left');
+//             this.cssObj.zindex = $(".videoBox").css('z-index');
+//             this.cssObj.margintop = $(".videoBox").css('margin-top');
             
-            $(".videoBox").css({
-                "width":windowWidth,
-                "height":windowHeight,
-                "position":'fixed',
-                "top":"0",
-                "left":"0",
-                "z-index":1000,
-                "margin-top":'0'
-            });
-            $("video").css({
-                "height":windowHeight-26,
-            })
+//             $(".videoBox").css({
+//                 "width":windowWidth,
+//                 "height":windowHeight,
+//                 "position":'fixed',
+//                 "top":"0",
+//                 "left":"0",
+//                 "z-index":1000,
+//                 "margin-top":'0'
+//             });
+//             $("video").css({
+//                 "height":windowHeight-26,
+//             })
 
-        },
-        backFull(){
-            this.isFull = true;
-            $(".videoBox").css({
-                "width":this.cssObj.width,
-                "height":this.cssObj.height,
-                "position":this.cssObj.position,
-                "top":this.cssObj.top,
-                "left":this.cssObj.left,
-                "z-index":this.cssObj.zindex,
-                "margin-top":this.cssObj.margintop
-            });
-            $("video").css({
-                "height":600,
-            })
-        },
-        getGroupList:function(){
-            // console.log("this",this);
-            let _this = this;
-            let getGroupUrl = '/group/userGroups/'+this.loginUserId;
-            vm.getData(getGroupUrl,'GET','', function(data){
-                console.log(data);
-                if(data.content){
-                    let contentList = data.content;
-                    if(contentList.length !== 0){
-                        _this.groupList = [];
-                        //设置默认选中设备组,默认第一个
-                        _this.defaultId = (contentList[0].id).toString();
-                        $.each(contentList,function(i){         
-                            _this.groupList.push({
-                                id:contentList[i].id,
-                                name:contentList[i].name,
-                                orderNum:contentList[i].orderNum || 1000,
-                                status:contentList[i].status,
-                            })
-                        })
-                        console.log("group data",_this.groupList);
-                    }
-                    _this.getDefaultFacilities(_this.defaultId);
-                }else{
-                    console.log("no group data");
-                }
-            },function(err){
-                console.log(err);
-            },true,true)
-        },
-        getThisFacilities:function(key,keyPath){
-            // console.log('test',key,keyPath);
-            let _this = this;
-            let groupId = parseInt(key);
-            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
-            vm.getData(groupFacilityUrl,'GET','', function(data){
-                console.log(data);
-                _this.facilityList = [];
-                if(data.message == 'OK' && data.content.length !== 0){
-                    _this.facilityList = data.content;
-                }else{
-                    _this.facilityList.push({
-                        name:'无设备',
-                        id:-1
-                    })
-                }
-            },function(err){
-                console.log(err);
-            },true,true)
-        },
-        getDefaultFacilities:function(groupId){
-            let _this = this;
-            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
-            vm.getData(groupFacilityUrl,'GET','', function(data){
-                console.log(data);
-                _this.facilityList = [];
-                if(data.message == 'OK' && data.content.length !== 0){
-                    _this.facilityList = data.content;
-                }else{
-                    _this.facilityList.push({
-                        name:'无设备',
-                        id:-1
-                    })
-                }
-                console.log("facility data",_this.facilityList);
-            },function(err){
-                console.log(err);
-            },true,true)
-        }
-    },
-    mounted:function(){
-        let _this = this;
-        Vue.nextTick(function(){
-            let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
-            if(userToken == null){
-                console.log('not login');
-                router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
-            }else{
-                console.log('mounted',userToken,vm);
-                vm.token = userToken;
-                let userId = parseInt(localStorage.getItem("userId"));
-                if(userId == null){
-                    console.log('userid 不存在');
-                }else{
-                    _this.loginUserId = userId;
-                }
-            };
-            _this.getGroupList();
-        })
-    }
-}
+//         },
+//         backFull(){
+//             this.isFull = true;
+//             $(".videoBox").css({
+//                 "width":this.cssObj.width,
+//                 "height":this.cssObj.height,
+//                 "position":this.cssObj.position,
+//                 "top":this.cssObj.top,
+//                 "left":this.cssObj.left,
+//                 "z-index":this.cssObj.zindex,
+//                 "margin-top":this.cssObj.margintop
+//             });
+//             $("video").css({
+//                 "height":600,
+//             })
+//         },
+//         getGroupList:function(){
+//             // console.log("this",this);
+//             let _this = this;
+//             let getGroupUrl = '/group/userGroups/'+this.loginUserId;
+//             vm.getData(getGroupUrl,'GET','', function(data){
+//                 console.log(data);
+//                 if(data.content){
+//                     let contentList = data.content;
+//                     if(contentList.length !== 0){
+//                         _this.groupList = [];
+//                         //设置默认选中设备组,默认第一个
+//                         _this.defaultId = (contentList[0].id).toString();
+//                         $.each(contentList,function(i){         
+//                             _this.groupList.push({
+//                                 id:contentList[i].id,
+//                                 name:contentList[i].name,
+//                                 orderNum:contentList[i].orderNum || 1000,
+//                                 status:contentList[i].status,
+//                             })
+//                         })
+//                         console.log("group data",_this.groupList);
+//                     }
+//                     _this.getDefaultFacilities(_this.defaultId);
+//                 }else{
+//                     console.log("no group data");
+//                 }
+//             },function(err){
+//                 console.log(err);
+//             },true,true)
+//         },
+//         getThisFacilities:function(key,keyPath){
+//             // console.log('test',key,keyPath);
+//             let _this = this;
+//             let groupId = parseInt(key);
+//             let groupFacilityUrl = '/group/groupFacilities/'+groupId;
+//             vm.getData(groupFacilityUrl,'GET','', function(data){
+//                 console.log(data);
+//                 _this.facilityList = [];
+//                 if(data.message == 'OK' && data.content.length !== 0){
+//                     _this.facilityList = data.content;
+//                 }else{
+//                     _this.facilityList.push({
+//                         name:'无设备',
+//                         id:-1
+//                     })
+//                 }
+//             },function(err){
+//                 console.log(err);
+//             },true,true)
+//         },
+//         getDefaultFacilities:function(groupId){
+//             let _this = this;
+//             let groupFacilityUrl = '/group/groupFacilities/'+groupId;
+//             vm.getData(groupFacilityUrl,'GET','', function(data){
+//                 console.log(data);
+//                 _this.facilityList = [];
+//                 if(data.message == 'OK' && data.content.length !== 0){
+//                     _this.facilityList = data.content;
+//                 }else{
+//                     _this.facilityList.push({
+//                         name:'无设备',
+//                         id:-1
+//                     })
+//                 }
+//                 console.log("facility data",_this.facilityList);
+//             },function(err){
+//                 console.log(err);
+//             },true,true)
+//         }
+//     },
+//     mounted:function(){
+//         let _this = this;
+//         Vue.nextTick(function(){
+//             let userToken = JSON.parse(localStorage.getItem("userToken")); //取出登录用户信息
+//             if(userToken == null){
+//                 console.log('not login');
+//                 router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
+//             }else{
+//                 console.log('mounted',userToken,vm);
+//                 vm.token = userToken;
+//                 let userId = parseInt(localStorage.getItem("userId"));
+//                 if(userId == null){
+//                     console.log('userid 不存在');
+//                 }else{
+//                     _this.loginUserId = userId;
+//                 }
+//             };
+//             _this.getGroupList();
+//         })
+//     }
+// }
 
 // 用户管理
 var userManage = {
     template: '#userManage',
     data:function(){
-        let userList = [], currentUserId = null;
-        let isUserManageAddShow = false, isUserManageDelShow = false ,isUserManageUpdateShow = false;
+        let userList = [];
         let userInfo = {
             userName:'',
             password:'',
@@ -338,7 +435,7 @@ var userManage = {
         };
         return {
             userList,
-            currentUserId,
+            currentUserId:null,
             userInfo,
             dialogFormVisible: false,
             dialogGrpFormVisible:false,
@@ -347,9 +444,10 @@ var userManage = {
             checkGroupList,
             loading:true,
             isUserAdd:true,
-            isUserManageAddShow,
-            isUserManageDelShow,
-            isUserManageUpdateShow,
+            isUserManageAddShow:false,
+            isUserManageDelShow:false,
+            isUserManageUpdateShow:false,
+            isUserGroupOption:false,
             currentPage,
             currentSize,
             total,
@@ -596,6 +694,9 @@ var userManage = {
                 }
                 if(menuAuth.indexOf('修改用户') !== -1){
                     _this.isUserManageUpdateShow = true;
+                }
+                if(menuAuth.indexOf('绑定用户设备组') !== -1){
+                    _this.isUserGroupOption = true;
                 }
             };
             _this.getUserList(_this.currentPage,_this.currentSize);
@@ -898,7 +999,6 @@ var groupManage = {
     template: '#groupManage',
     data:function(){
         let groupList = [], currentGroupId = null;
-        let isGroupManageAddShow =false, isGroupManageDelShow = false, isGroupManageUpdateShow = false;
         let groupInfo = {
             name:'',
             orderNum:1
@@ -919,9 +1019,10 @@ var groupManage = {
             formLabelWidth: '120px',
             loading:true,
             isGroupAdd:true,
-            isGroupManageAddShow,
-            isGroupManageDelShow,
-            isGroupManageUpdateShow,
+            isGroupManageAddShow:false,
+            isGroupManageDelShow:false,
+            isGroupManageUpdateShow:false,
+            isGroupFacilityOption:false,
             checkFacilityList,
             currentPage,
             total,
@@ -1155,6 +1256,9 @@ var groupManage = {
                 }
                 if(menuAuth.indexOf('修改组') !== -1){
                     _this.isGroupManageUpdateShow = true;
+                }
+                if(menuAuth.indexOf('绑定设备组与设备') !== -1){
+                    _this.isGroupFacilityOption = true;
                 }
             };
             _this.getGroupList(_this.currentPage,_this.currentSize);
@@ -1460,20 +1564,21 @@ var routes = [
         component:Home,
         children:[
             {
-                path:'monitor',
-                component:monitor
-            },{
                 path:'userManage',
-                component:userManage
+                component:userManage,
+                meta: { title: '用户管理' }
             },{
                 path:'facilityManage',
-                component:facilityManage
+                component:facilityManage,
+                meta: { title: '设备列表' }
             },{
                 path:'groupManage',
-                component:groupManage
+                component:groupManage,
+                meta: { title: '设备组列表' }
             },{
                 path:'auth',
-                component:auth
+                component:auth,
+                meta: { title: '用户授权' }
             }
         ]
     },
