@@ -56,7 +56,7 @@
             <div class="header">
                 <div class="logo"></div>
                 <div class="header-right">
-                    <el-menu :default-active="activeIndex" class="el-menu-demo" @select="handleSelect" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                    <el-menu :default-active="activeIndex" class="el-menu-demo" @select="handleSelect" mode="horizontal" text-color="#fff" active-text-color="#ffd04b">
                         <el-menu-item index="1">
                             <router-link to="/home/monitor">实时监控</router-link>
                         </el-menu-item>
@@ -100,7 +100,7 @@
     <template id="monitor">
         <div class="mainContainer">
             <div class="sidebar" >
-                <el-menu @select="getThisFacilities" :default-active="defaultId" class="sidebar-el-menu" background-color="rgba(84,92,100,1)"
+                <el-menu @select="getThisFacilities" :default-active="defaultId" class="sidebar-el-menu" background-color="rgb(50, 65, 87)"
                 text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)">
                     <template v-for="(groupInfo,groupInfoIndex) in groupList">
                         <template>
@@ -155,7 +155,7 @@
                     <el-table-column prop="password" label="密码" width="150"></el-table-column>
                     <el-table-column prop="sex" label="性别" width="100"></el-table-column> 
                     <el-table-column prop="phone" label="电话号码"></el-table-column>
-                    <el-table-column prop="groupId" label="设备组" width="100">
+                    <el-table-column prop="groupId" label="设备组" width="100" v-if="isUserGroupOption == true">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary" @click="getUserGroup(scope.row.id);dialogGrpFormVisible = true">查看</el-button>   
                         </template>
@@ -201,9 +201,9 @@
                 <el-checkbox-group v-model="checkGroupList">
                     <el-checkbox :key="index" name="groupCheckbox" v-for="(grp,index) in GroupList" :label="grp.id" @change="showThisGrpId(grp.id)" border>{{grp.name}}</el-checkbox>
                 </el-checkbox-group>  
-                <span slot="footer" class="dialog-footer">
+                <!-- <span slot="footer" class="dialog-footer">
                   <el-button @click="dialogGrpFormVisible = false">取 消</el-button>
-                </span>
+                </span> -->
             </el-dialog>
         </div>
     </template>
@@ -289,7 +289,7 @@
                 <el-table :data="groupList" stripe border style="width: 100%">
                     <el-table-column prop="name" label="设备组名称" width="150"></el-table-column>
                     <el-table-column prop="orderNum" label="序号"></el-table-column>
-                    <el-table-column prop="facilityId" label="关联设备" width="100">
+                    <el-table-column prop="facilityId" label="关联设备" width="100" v-if="isGroupFacilityOption == true">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary" @click="getGroupFacilities(scope.row.id);dialogFacilityFormVisible = true">查看</el-button>
                         </template>
@@ -328,9 +328,9 @@
                 <el-checkbox-group v-model="checkFacilityList">
                     <el-checkbox :key="index" name="facilityCheckbox" v-for="(facility,index) in FacilityList" :label="facility.id" @change="showThisfacilityId(facility.id)" border>{{facility.name}}</el-checkbox>
                 </el-checkbox-group> 
-                <span slot="footer" class="dialog-footer">
+                <!-- <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogFacilityFormVisible = false">取 消</el-button>
-                </span>
+                </span> -->
             </el-dialog>
         </div>
     </template>

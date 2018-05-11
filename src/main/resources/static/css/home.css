@@ -162,11 +162,13 @@ input:-webkit-autofill {
 .header-right{
     padding-left:200px;
 }
-
+.header-right > ul {
+    background-color: rgba(36,47,66,1);
+}
 .logo {
     width: 200px;
     height: 60px;
-    background-color: rgba(84,92,100,1);
+    background-color: rgba(36,47,66,1);
     background-image: url(../img/logo.png);
     background-position: 52px 8px;
     position: absolute;
@@ -267,10 +269,10 @@ li[role='menuitem'] > a {
     height:100%;
 }
 .el-aside {
-    background-color: rgba(84,92,100,1);
+    background-color: rgba(36,47,66,1);
 }
 .el-menu-item:focus, .el-menu-item:hover {
-    background-color: rgba(84,92,100,0.8)!important;
+    background-color: rgba(36,47,66,0.5)!important;
     color: #fff;
 }
 .sidebar .el-menu-item.is-active {

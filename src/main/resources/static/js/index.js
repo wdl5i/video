@@ -306,8 +306,7 @@ var monitor = {
 var userManage = {
     template: '#userManage',
     data:function(){
-        let userList = [], currentUserId = null;
-        let isUserManageAddShow = false, isUserManageDelShow = false ,isUserManageUpdateShow = false;
+        let userList = [];
         let userInfo = {
             userName:'',
             password:'',
@@ -338,7 +337,7 @@ var userManage = {
         };
         return {
             userList,
-            currentUserId,
+            currentUserId:null,
             userInfo,
             dialogFormVisible: false,
             dialogGrpFormVisible:false,
@@ -347,9 +346,10 @@ var userManage = {
             checkGroupList,
             loading:true,
             isUserAdd:true,
-            isUserManageAddShow,
-            isUserManageDelShow,
-            isUserManageUpdateShow,
+            isUserManageAddShow:false,
+            isUserManageDelShow:false,
+            isUserManageUpdateShow:false,
+            isUserGroupOption:false,
             currentPage,
             currentSize,
             total,
@@ -596,6 +596,9 @@ var userManage = {
                 }
                 if(menuAuth.indexOf('修改用户') !== -1){
                     _this.isUserManageUpdateShow = true;
+                }
+                if(menuAuth.indexOf('绑定用户设备组') !== -1){
+                    _this.isUserGroupOption = true;
                 }
             };
             _this.getUserList(_this.currentPage,_this.currentSize);
@@ -898,7 +901,6 @@ var groupManage = {
     template: '#groupManage',
     data:function(){
         let groupList = [], currentGroupId = null;
-        let isGroupManageAddShow =false, isGroupManageDelShow = false, isGroupManageUpdateShow = false;
         let groupInfo = {
             name:'',
             orderNum:1
@@ -919,9 +921,10 @@ var groupManage = {
             formLabelWidth: '120px',
             loading:true,
             isGroupAdd:true,
-            isGroupManageAddShow,
-            isGroupManageDelShow,
-            isGroupManageUpdateShow,
+            isGroupManageAddShow:false,
+            isGroupManageDelShow:false,
+            isGroupManageUpdateShow:false,
+            isGroupFacilityOption:false,
             checkFacilityList,
             currentPage,
             total,
@@ -1155,6 +1158,9 @@ var groupManage = {
                 }
                 if(menuAuth.indexOf('修改组') !== -1){
                     _this.isGroupManageUpdateShow = true;
+                }
+                if(menuAuth.indexOf('绑定设备组与设备') !== -1){
+                    _this.isGroupFacilityOption = true;
                 }
             };
             _this.getGroupList(_this.currentPage,_this.currentSize);
