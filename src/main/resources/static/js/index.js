@@ -61,12 +61,11 @@ var Login = {
 var Home = {
     template: '#home',
     data:function(){
-        let userId = 0;
         return {
             activeIndex: '',
             defaultIndex1:'groupManage',
             defaultIndex2:'userManage',
-            userId,
+            userId:0,
             userName:'admin',
             showSidebar:'',
             systemManageList:[
@@ -175,7 +174,6 @@ var Home = {
         },
         // 设置标签
         setTags(route){
-            console.log("route",route,'this.tagsList',this.tagsList);
             const isExist = this.tagsList.some(item => {
                 return item.path === route.path;
             })
@@ -196,7 +194,6 @@ var Home = {
                 console.log('not login');
                 router.push({path:'/login'}); //无缓存登录信息，跳转回登录页
             }else{
-                console.log('mounted',userToken,vm);
                 vm.token = userToken;
                 let menuAuth = (localStorage.getItem("menuAuth")).split(",");
                 if(menuAuth.indexOf('用户管理') !== -1){
@@ -407,19 +404,6 @@ var Home = {
 var userManage = {
     template: '#userManage',
     data:function(){
-        let userList = [];
-        let userInfo = {
-            userName:'',
-            password:'',
-            sex:'女',
-            phone:''
-        };
-        let currentPage = 1;
-        let total = 0;
-        let currentSize = 10;
-        let GroupList = [];
-        let checkGroupList = [];
-
         //手机号码验证规则
         let checkPhone = (rule, value, callback) => {
             let phoneReg=/^[1][3,4,5,7,8][0-9]{9}$/;
@@ -437,23 +421,28 @@ var userManage = {
             }, 1000);
         };
         return {
-            userList,
+            userList:[],
             currentUserId:null,
-            userInfo,
+            userInfo:{
+                userName:'',
+                password:'',
+                sex:'女',
+                phone:''
+            },
             dialogFormVisible: false,
             dialogGrpFormVisible:false,
             formLabelWidth: '120px',
-            GroupList,
-            checkGroupList,
+            GroupList:[],
+            checkGroupList:[],
             loading:true,
             isUserAdd:true,
             isUserManageAddShow:false,
             isUserManageDelShow:false,
             isUserManageUpdateShow:false,
             isUserGroupOption:false,
-            currentPage,
-            currentSize,
-            total,
+            currentPage:1,
+            currentSize:10,
+            total:0,
             rules: {
                 userName: [
                   { required: true, message: '请输入用户名称', trigger: 'blur' },
@@ -711,20 +700,6 @@ var userManage = {
 var facilityManage = {
     template: '#facilityManage',
     data:function(){
-        let facilityList = [], currentFacilityId = null;
-        let isFacilityManageAddShow =false, isFacilityManageDelShow = false, isFacilityManageUpdateShow = false;
-        let facilityInfo = {
-            name:'',
-            userName:'',
-            password:'',
-            type:1,
-            serial:'',
-            type:1,
-            orderNum:1
-        }
-        let currentPage = 1;
-        let total = 0;
-        let currentSize = 10;
         //设备相关验证规则
         let checkSerial = (rule, value, callback) => {
             //let serialReg=/^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/;
@@ -742,20 +717,28 @@ var facilityManage = {
             // }, 100);
         };
         return {
-            facilityList,
-            currentFacilityId,
-            facilityInfo,
+            facilityList:[],
+            currentFacilityId:null,
+            facilityInfo:{
+                name:'',
+                userName:'',
+                password:'',
+                type:1,
+                serial:'',
+                type:1,
+                orderNum:1
+            },
             dialogFormVisible: false,
             dialogMonitorVisible:false,
             formLabelWidth: '120px',
             loading:true,
             isFacilityAdd:true,
-            isFacilityManageAddShow,
-            isFacilityManageDelShow,
-            isFacilityManageUpdateShow,
-            currentPage,
-            currentSize,
-            total,
+            isFacilityManageAddShow:false,
+            isFacilityManageDelShow:false,
+            isFacilityManageUpdateShow:false,
+            currentPage:1,
+            currentSize:10,
+            total:0,
             isFull:true,
             cssObj:{},
             options:[
@@ -1019,22 +1002,14 @@ var facilityManage = {
 var groupManage = {
     template: '#groupManage',
     data:function(){
-        let groupList = [], currentGroupId = null;
-        let groupInfo = {
-            name:'',
-            orderNum:1
-        };
-        let currentPage = 1;
-        let total = 0;
-        let currentSize = 10;
-        let FacilityList = [];
-        let checkFacilityList = [];
-
         return {
-            groupList,
-            currentGroupId,
-            groupInfo,
-            FacilityList,
+            groupList:[],
+            currentGroupId:null,
+            groupInfo:{
+                name:'',
+                orderNum:1
+            },
+            FacilityList:[],
             dialogFormVisible: false,
             dialogFacilityFormVisible:false,
             formLabelWidth: '120px',
@@ -1044,10 +1019,10 @@ var groupManage = {
             isGroupManageDelShow:false,
             isGroupManageUpdateShow:false,
             isGroupFacilityOption:false,
-            checkFacilityList,
-            currentPage,
-            total,
-            currentSize,
+            checkFacilityList:[],
+            currentPage:1,
+            total:0,
+            currentSize:10,
             rules: {
                 name: [
                   { required: true, message: '请输入设备组名称', trigger: 'blur' },
@@ -1291,31 +1266,21 @@ var groupManage = {
 var auth = {
     template:'#auth',
     data:function(){
-        let TreeData = [];
-        let checkData = [];
-        let authUserList = [];
-        let currentAuthUserId;
-        let lastCheckedData = [];
-        let currentUserId = 0;
-
-        let currentPage = 1;
-        let total = 0;
-        let currentSize = 10;
         return {
-            TreeData,
+            TreeData:[],
             defaultProps: {
                 children: 'children',
                 label: 'label'
             },
-            checkData,
+            checkData:[],
             dialogFormVisible: false,
-            authUserList,
-            currentAuthUserId,
-            lastCheckedData,
-            currentUserId,
-            currentPage,
-            currentSize,
-            total
+            authUserList:[],
+            currentAuthUserId:null,
+            lastCheckedData:[],
+            currentUserId:0,
+            currentPage:1,
+            currentSize:10,
+            total:0
         }
     },
     methods:{
