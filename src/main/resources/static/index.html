@@ -10,9 +10,9 @@
 </head>
 <body>
     <div id="app">
-        <div class="wrapper">
+        
             <router-view></router-view>
-        </div>
+        
     </div>
 
     <!-- 登录页模板 -->
@@ -52,26 +52,18 @@
 
     <!-- 主页模板 -->
     <template id="home">
-        <div>
+        <div class="wrapper">
+            <!-- header -->
             <div class="header">
                 <div class="logo"></div>
                 <div class="header-right">
                     <el-menu :default-active="activeIndex" class="el-menu-demo" @select="handleSelect" mode="horizontal" text-color="#fff" active-text-color="#ffd04b">
-                        <el-menu-item index="1">
+                        <el-menu-item index="1" @click="goFacility()">设备管理</el-menu-item>
+                        <el-menu-item index="2" @click="goSystem()">系统管理</el-menu-item>
+                        <!-- <el-menu-item index="1">
                             <router-link to="/home/monitor">实时监控</router-link>
-                        </el-menu-item>
-                        <el-menu-item index="4" v-show="isFacilityManageShow == true">
-                            <router-link to="/home/facilityManage">设备管理</router-link>
-                        </el-menu-item>
-                        <el-menu-item index="5" v-show="isGroupManageShow == true">
-                            <router-link to="/home/groupManage">设备组管理</router-link>
-                        </el-menu-item>
-                        <el-menu-item index="2" v-show="isUserManageShow == true">
-                            <router-link to="/home/userManage">用户管理</router-link>
-                        </el-menu-item>
-                        <el-menu-item index="3" v-show="userId == 1">
-                            <router-link to="/home/auth">用户授权</router-link>
-                        </el-menu-item>
+                        </el-menu-item> -->
+                        
                     </el-menu>
                     <!-- 用户头像 -->
                     <div class="user-avator"><img src="img/user.png"></div>
@@ -81,23 +73,74 @@
                             {{username}} <i class="el-icon-caret-bottom"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <!-- <a href="#" target="_blank">
-                                <el-dropdown-item>我的消息</el-dropdown-item>
-                            </a>
-                            <a href="#" target="_blank">
-                                <el-dropdown-item>修改密码</el-dropdown-item>
-                            </a> -->
                             <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </div>
             </div>
-            <router-view></router-view>
+            <!-- sidebar -->
+            <div class="sidebar">
+                <!-- 系统管理 -->
+                <el-menu :default-active="onRoutes" class="sidebar-el-menu" background-color="rgb(50, 65, 87)"
+                text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)" v-show="showSidebar == 'system'" router>
+                    <template v-for="systemManageList in systemManageList">
+                        <template>
+                            <el-menu-item :index="systemManageList.index" :key="systemManageList.index" v-show="systemManageList.isShow == true">
+                                <i :class="systemManageList.icon"></i>
+                                <span slot="title">
+                                    {{ systemManageList.name }}
+                                </span>
+                            </el-menu-item>
+                        </template>
+                    </template>
+                </el-menu>
+
+                <!-- 设备管理 -->
+                <el-menu :default-active="onRoutes" class="sidebar-el-menu" background-color="rgb(50, 65, 87)"
+                text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)" v-show="showSidebar == 'facility'" router>
+                    <template v-for="facilityManageList in facilityManageList">
+                        <template>
+                            <el-menu-item :index="facilityManageList.index" :key="facilityManageList.index" v-show="facilityManageList.isShow == true">
+                                <i :class="facilityManageList.icon"></i>
+                                <span slot="title">
+                                        {{ facilityManageList.name }}
+                                </span>
+                            </el-menu-item>
+                        </template>
+                    </template>
+                </el-menu>
+            </div>
+            <!-- content -->
+            <div class="content-box">
+                <!-- tags -->
+                <div class="tags" v-if="showTags">
+                    <ul>
+                        <li class="tags-li" v-for="(item,index) in tagsList" :class="{'active': isActive(item.path)}" :key="index">
+                            <router-link :to="item.path" class="tags-li-title">
+                                {{item.title}}
+                            </router-link>
+                            <span class="tags-li-icon" @click="closeTags(index)"><i class="el-icon-close"></i></span>
+                        </li>
+                    </ul>
+                    <div class="tags-close-box">
+                        <el-dropdown @command="handleTags">
+                            <el-button size="mini" type="primary">
+                                标签选项<i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu size="small" slot="dropdown">
+                                <el-dropdown-item command="other">关闭其他</el-dropdown-item>
+                                <el-dropdown-item command="all">关闭所有</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
+                </div>
+                <router-view></router-view>
+            </div>
         </div>
     </template>
 
     <!-- 实时监控模板 -->
-    <template id="monitor">
+    <!-- <template id="monitor">
         <div class="mainContainer">
             <div class="sidebar" >
                 <el-menu @select="getThisFacilities" :default-active="defaultId" class="sidebar-el-menu" background-color="rgb(50, 65, 87)"
@@ -136,7 +179,7 @@
                 </div>
             </div>
         </div>
-    </template>
+    </template> -->
 
     <!-- 用户管理模板 -->
     <template id="userManage">
