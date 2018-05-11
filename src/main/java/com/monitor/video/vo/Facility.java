@@ -5,8 +5,8 @@ import javax.persistence.Table;
 @Table(name = "facility")
 public class Facility extends BaseEntity{
     private int type;
-    private String ipAddr;
-    private int port;
+    private String userName;
+    private String password;
     private String serial;
     private float orderNum;
     private String remark;
@@ -19,20 +19,20 @@ public class Facility extends BaseEntity{
         this.type = type;
     }
 
-    public String getIpAddr() {
-        return ipAddr;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setIpAddr(String ipAddr) {
-        this.ipAddr = ipAddr;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public int getPort() {
-        return port;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getSerial() {
