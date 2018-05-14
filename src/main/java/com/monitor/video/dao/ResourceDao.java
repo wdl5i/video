@@ -1,7 +1,6 @@
 package com.monitor.video.dao;
 
 import com.monitor.video.vo.Resource;
-import com.monitor.video.vo.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import tk.mybatis.mapper.common.Mapper;
