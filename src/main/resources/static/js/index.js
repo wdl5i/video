@@ -678,6 +678,12 @@ var userManage = {
                 console.log('mounted',userToken,vm);
                 vm.token = userToken;
                 let menuAuth = (localStorage.getItem("menuAuth")).split(",");
+                if(menuAuth.indexOf('用户管理') !== -1){
+                    _this.getUserList(_this.currentPage,_this.currentSize);
+                    _this.getAllGrpList();
+                }else{
+                    $(".mainContainer").html('<h2>无权限</h2>').css({"color":"#666"});
+                }
                 if(menuAuth.indexOf('添加用户') !== -1){
                     _this.isUserManageAddShow = true;
                 }
@@ -691,8 +697,7 @@ var userManage = {
                     _this.isUserGroupOption = true;
                 }
             };
-            _this.getUserList(_this.currentPage,_this.currentSize);
-            _this.getAllGrpList();
+            
         })
     }
 }
@@ -983,6 +988,11 @@ var facilityManage = {
                 console.log('mounted',userToken,vm);
                 vm.token = userToken;
                 let menuAuth = (localStorage.getItem("menuAuth")).split(",");
+                if(menuAuth.indexOf('设备管理') !== -1){
+                    _this.getFacilityList(_this.currentPage,_this.currentSize);
+                }else{
+                    $(".mainContainer").html('<h2>无权限</h2>').css({"color":"#666"});
+                }
                 if(menuAuth.indexOf('添加设备') !== -1){
                     _this.isFacilityManageAddShow = true;
                 }
@@ -993,7 +1003,7 @@ var facilityManage = {
                     _this.isFacilityManageUpdateShow = true;
                 }
             };
-            _this.getFacilityList(_this.currentPage,_this.currentSize);
+            
         })
         
     }
