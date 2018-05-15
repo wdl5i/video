@@ -111,89 +111,24 @@
                 </el-menu>
             </div>
             <!-- content -->
-            <div class="content-box">
-                <!-- tags -->
-                <div class="tags" v-if="showTags">
-                    <ul>
-                        <li class="tags-li" v-for="(item,index) in tagsList" :class="{'active': isActive(item.path)}" :key="index">
-                            <router-link :to="item.path" class="tags-li-title">
-                                {{item.title}}
-                            </router-link>
-                            <span class="tags-li-icon" @click="closeTags(index)"><i class="el-icon-close"></i></span>
-                        </li>
-                    </ul>
-                    <div class="tags-close-box">
-                        <el-dropdown @command="handleTags">
-                            <el-button size="mini" type="primary">
-                                标签选项<i class="el-icon-arrow-down el-icon--right"></i>
-                            </el-button>
-                            <el-dropdown-menu size="small" slot="dropdown">
-                                <el-dropdown-item command="other">关闭其他</el-dropdown-item>
-                                <el-dropdown-item command="all">关闭所有</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                    </div>
-                </div>
+            <div class="content-box content-right">
                 <router-view></router-view>
             </div>
+            
         </div>
     </template>
-
-    <!-- 实时监控模板 -->
-    <!-- <template id="monitor">
-        <div class="mainContainer">
-            <div class="sidebar" >
-                <el-menu @select="getThisFacilities" :default-active="defaultId" class="sidebar-el-menu" background-color="rgb(50, 65, 87)"
-                text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)">
-                    <template v-for="(groupInfo,groupInfoIndex) in groupList">
-                        <template>
-                            <el-menu-item :index="''+groupInfo.id" :key="groupInfo.id">
-                                <i class="el-icon-menu"></i>
-                                <span slot="title">{{ groupInfo.name }}</span>
-                            </el-menu-item>
-                        </template>
-                    </template>
-                </el-menu>
-            </div>
-            <div class="rightMain" >
-                <div class="content">
-                    <div class="facilityArea">
-                        <div class="facilityBox" v-for="facilityList in facilityList">
-                            <span :class="'facilityType' + facilityList.type"></span>
-                            <el-button :key="facilityList.id" type="primary" size="small" plain>{{ facilityList.name }}</el-button>
-                        </div>
-                        
-                    </div>
-                    <div class="crumbs">
-                        <el-breadcrumb separator="/">
-                            <el-breadcrumb-item><i class="el-icon-view"></i>视频窗口</el-breadcrumb-item>
-                        </el-breadcrumb>
-                    </div>
-                    <div class="videoBox">
-                        <div class="fullScreen">
-                            <i class="el-icon-plus" v-show="isFull == true" @click="goFull()" title="全屏显示"></i> 
-                            <i class="el-icon-minus" v-show="isFull == false" @click="backFull()" title="取消全屏"></i> 
-                        </div>
-                        <video autoplay></video>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </template> -->
 
     <!-- 用户管理模板 -->
     <template id="userManage">
         <div class="mainContainer content">
-            <div class="crumbs">
-                <el-breadcrumb separator="/">
-                    <el-breadcrumb-item><i class="el-icon-tickets"></i>用户列表</el-breadcrumb-item>
-                </el-breadcrumb>
-            </div>
+            <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+                <el-tab-pane :key="tab.id" v-for="tab in tabs" :label="tab.title" :name="tab.id"></el-tab-pane>
+            </el-tabs>
             <div class="container">
                 <div class="handle-box">
                     <el-button type="primary" size="small" plain icon="delete" @click="dialogFormVisible = true;isUserAdd = true" v-show="isUserManageAddShow == true">添加用户</el-button>
                 </div>
-                <el-table :data="userList" stripe border style="width: 100%">
+                <el-table :data="userList" stripe border style="width: 100%" size="mini">
                     <el-table-column prop="name" label="用户名称" width="150"></el-table-column>
                     <el-table-column prop="password" label="密码" width="150"></el-table-column>
                     <el-table-column prop="sex" label="性别" width="100"></el-table-column> 
@@ -240,13 +175,10 @@
               </span>
             </el-dialog>
             <!-- 设备组查看对话框 -->
-            <el-dialog title="配置设备组" :visible.sync="dialogGrpFormVisible">
+            <el-dialog title="配置设备组" :visible.sync="dialogGrpFormVisible" width="30%">
                 <el-checkbox-group v-model="checkGroupList">
-                    <el-checkbox :key="index" name="groupCheckbox" v-for="(grp,index) in GroupList" :label="grp.id" @change="showThisGrpId(grp.id)" border>{{grp.name}}</el-checkbox>
-                </el-checkbox-group>  
-                <!-- <span slot="footer" class="dialog-footer">
-                  <el-button @click="dialogGrpFormVisible = false">取 消</el-button>
-                </span> -->
+                    <el-checkbox :key="index" name="groupCheckbox" v-for="(grp,index) in GroupList" :label="grp.id" @change="showThisGrpId(grp.id)">{{grp.name}}</el-checkbox>
+                </el-checkbox-group>
             </el-dialog>
         </div>
     </template>
@@ -254,16 +186,16 @@
     <!-- 设备管理模板 -->
     <template id="facilityManage">
         <div class="mainContainer content">
-            <div class="crumbs">
-                <el-breadcrumb separator="/">
-                    <el-breadcrumb-item><i class="el-icon-tickets"></i>设备列表</el-breadcrumb-item>
-                </el-breadcrumb>
-            </div>
+            <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+                <el-tab-pane :key="tab.id" v-for="tab in tabs" :label="tab.title" :name="tab.id">
+                    
+                </el-tab-pane>
+            </el-tabs>
             <div class="container">
                 <div class="handle-box">
                     <el-button type="primary" size="small" plain icon="delete" @click="dialogFormVisible = true;isFacilityAdd = true" v-show="isFacilityManageAddShow == true">添加设备</el-button>
                 </div>
-                <el-table :data="facilityList" stripe border style="width: 100%">
+                <el-table :data="facilityList" stripe border style="width: 100%" size="mini">
                     <el-table-column prop="name" label="设备名称" width="150"></el-table-column>
                     <el-table-column prop="userName" label="设备用户" width="150"></el-table-column>
                     <el-table-column prop="password" label="设备密码" width="100"></el-table-column>
@@ -306,10 +238,10 @@
                         <el-input v-model="facilityInfo.name" placeholder="请输入设备名称" clearable></el-input>
                     </el-form-item>
                     <el-form-item label="设备用户" :label-width="formLabelWidth" prop="userName">
-                        <el-input v-model="facilityInfo.userName" placeholder="请输入设备IP" clearable></el-input>
+                        <el-input v-model="facilityInfo.userName" placeholder="请输入设备用户名称" clearable></el-input>
                     </el-form-item>
                     <el-form-item label="设备密码" :label-width="formLabelWidth" prop="password">
-                        <el-input v-model="facilityInfo.password" placeholder="请输入设备端口" clearable></el-input>
+                        <el-input v-model="facilityInfo.password" placeholder="请输入设备密码" clearable></el-input>
                     </el-form-item>
                     <el-form-item label="设备Serial" :label-width="formLabelWidth" prop="serial">
                         <el-input v-model="facilityInfo.serial" placeholder="请输入设备serial" clearable></el-input>
@@ -336,16 +268,16 @@
     <!-- 设备组管理模板 -->
     <template id="groupManage">
         <div class="mainContainer content">
-            <div class="crumbs">
-                <el-breadcrumb separator="/">
-                    <el-breadcrumb-item><i class="el-icon-tickets"></i>设备组列表</el-breadcrumb-item>
-                </el-breadcrumb>
-            </div>
+            <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+                <el-tab-pane :key="tab.id" v-for="tab in tabs" :label="tab.title" :name="tab.id">
+                    
+                </el-tab-pane>
+            </el-tabs>
             <div class="container">
                 <div class="handle-box">
                     <el-button type="primary" size="small" icon="delete" plain @click="dialogFormVisible = true;isGroupAdd = true" v-show="isGroupManageAddShow == true">添加设备组</el-button>
                 </div>
-                <el-table :data="groupList" stripe border style="width: 100%">
+                <el-table :data="groupList" stripe border style="width: 100%" size="mini">
                     <el-table-column prop="name" label="设备组名称" width="150"></el-table-column>
                     <el-table-column prop="orderNum" label="序号"></el-table-column>
                     <el-table-column prop="facilityId" label="关联设备" width="100" v-if="isGroupFacilityOption == true">
@@ -383,13 +315,10 @@
                 </span>
             </el-dialog>
             <!-- 设备查看对话框 -->
-            <el-dialog title="配置设备组" :visible.sync="dialogFacilityFormVisible">
+            <el-dialog title="配置设备组" :visible.sync="dialogFacilityFormVisible" width="30%">
                 <el-checkbox-group v-model="checkFacilityList">
-                    <el-checkbox :key="index" name="facilityCheckbox" v-for="(facility,index) in FacilityList" :label="facility.id" @change="showThisfacilityId(facility.id)" border>{{facility.name}}</el-checkbox>
-                </el-checkbox-group> 
-                <!-- <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogFacilityFormVisible = false">取 消</el-button>
-                </span> -->
+                    <el-checkbox :key="index" name="facilityCheckbox" v-for="(facility,index) in FacilityList" :label="facility.id" @change="showThisfacilityId(facility.id)">{{facility.name}}</el-checkbox>
+                </el-checkbox-group>
             </el-dialog>
         </div>
     </template>
@@ -397,13 +326,13 @@
     <!-- 用户授权模板 -->
     <template id="auth">
         <div class="mainContainer content">
-            <div class="crumbs">
-                <el-breadcrumb separator="/">
-                    <el-breadcrumb-item><i class="el-icon-tickets"></i>设备列表</el-breadcrumb-item>
-                </el-breadcrumb>
-            </div>
+            <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+                <el-tab-pane :key="tab.id" v-for="tab in tabs" :label="tab.title" :name="tab.id">
+                    
+                </el-tab-pane>
+            </el-tabs>
             <div class="container">
-                <el-table :data="authUserList" stripe border style="width: 100%">
+                <el-table :data="authUserList" stripe border style="width: 100%" size="mini">
                     <el-table-column prop="name" label="用户名称"></el-table-column>
                     <el-table-column prop="option" label="操作" width="100">
                         <template slot-scope="scope">
