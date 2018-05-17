@@ -302,6 +302,10 @@ li[role='menuitem'] > a {
     background-color: rgba(36,47,66,0.5)!important;
     color: #fff;
 }
+.el-submenu:focus, .el-submenu:hover, .el-submenu:focus div, .el-submenu:hover div {
+    background-color: rgba(36,47,66,0.5)!important;
+    color: #fff;
+}
 .sidebar .el-menu-item.is-active {
     color: #409EFF!important;
 }
@@ -396,4 +400,51 @@ video {
     display: block;
     margin-left: 10px;
     margin-bottom: 10px;
+}
+
+/* panel */
+.checkPanel {
+    width: 100%;
+    height: 30%;
+    overflow: auto;
+    border: 1px solid rgb(235, 238, 245);
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+.allPanel {
+    width: 100%;
+    height: 50%;
+    overflow: auto;
+    border: 1px solid rgb(235, 238, 245);
+    border-radius: 5px;
+}
+.panelTitle {
+    height: 40px;
+    line-height: 40px;
+    background: #f5f7fa;
+    margin: 0;
+    padding-left: 15px;
+    border-bottom: 1px solid #ebeef5;
+    box-sizing: border-box;
+    color: #000;
+}
+.panelTag {
+    padding: 20px;
+}
+.checkTag .el-tag {
+    margin-left: 10px;
+}
+.allTag .el-tag {
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: rgba(144,147,153,.1);
+    border-color: rgba(144,147,153,.2);
+    color: #909399;
+    padding: 0 10px;
+    height: 32px;
+    line-height: 30px;
+    font-size: 12px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    white-space: nowrap;
 }

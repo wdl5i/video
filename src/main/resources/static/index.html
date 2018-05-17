@@ -96,10 +96,23 @@
                 </el-menu>
 
                 <!-- 设备管理 -->
-                <el-menu :default-active="onRoutes" class="sidebar-el-menu" background-color="rgb(50, 65, 87)"
-                text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)" v-show="showSidebar == 'facility'" router>
+                <el-menu :default-active="onRoutes" class="sidebar-el-menu" background-color="rgb(50, 65, 87)" :default-openeds="defaultOpeneds"
+                @open="openhandle" @close="closehandle" text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)" v-show="showSidebar == 'facility'" router>
                     <template v-for="facilityManageList in facilityManageList">
-                        <template>
+                        <template v-if="facilityManageList.subs">
+                            <el-submenu :index="facilityManageList.index" :key="facilityManageList.index">
+                                <template slot="title">
+                                    <i :class="facilityManageList.icon"></i>
+                                    <span slot="title">
+                                            {{ facilityManageList.name }}
+                                    </span>
+                                </template>
+                                <el-menu-item v-for="(subItem,i) in facilityManageList.subs" :key="i" :index="subItem.index">
+                                    {{ subItem.name }}
+                                </el-menu-item>
+                            </el-submenu>
+                        </template>
+                        <template v-else>
                             <el-menu-item :index="facilityManageList.index" :key="facilityManageList.index" v-show="facilityManageList.isShow == true">
                                 <i :class="facilityManageList.icon"></i>
                                 <span slot="title">
@@ -353,6 +366,31 @@
             </el-dialog>
         </div>
     </template>
+
+    <!-- 设备组下设备模板 -->
+    <template id="groupFacility">
+            <div class="mainContainer content">
+                
+                <div class="container">
+                   <div class="checkPanel">
+                       <p class="panelTitle">已选设备</p>
+                       <div class="panelTag checkTag">
+                            <el-tag v-for="tag in groupFacilityList" :key="tag.id" closable @close="handleClose(tag)">
+                                {{tag.name}}
+                            </el-tag>
+                       </div>
+                   </div>
+                   <div class="allPanel">
+                        <p class="panelTitle">全部设备</p>
+                        <div class="panelTag allTag">
+                            <span class="el-tag" v-for="tag in AllFacilityList" :key="tag.id" @click="addThisTag(tag.id)" title="添加">
+                                {{tag.name}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
 
     <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="js/vue.js"></script>
