@@ -46,7 +46,7 @@ public class GroupController extends AbstractController<Group> {
         return service.addGroupFacility(groupId, facilityId);
     }
 
-    @DeleteMapping("/groupFacilities/{userId}/{groupId}")
+    @DeleteMapping("/groupFacilities/{groupId}/{facilityId}")
     public RestResult removeGroupFacility(@PathVariable String groupId, @PathVariable String facilityId) {
         return service.removeGroupFacility(groupId, facilityId);
     }
