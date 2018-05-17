@@ -1032,6 +1032,8 @@ var groupManage = {
                                 message: '设备组添加成功!'
                             });
                             _this.getGroupList(_this.currentPage,_this.currentSize);
+                            console.log('home',Home);
+                            // Home.methods.getGroupList();
                         }else{
                             console.log('设备组添加失败');
                             _this.$message.error("设备组添加失败");
@@ -1438,8 +1440,6 @@ var auth = {
  var groupFacility = {
      template:'#groupFacility',
      data(){
-
-        
          return {
             groupId:null,
             groupFacilityList:[],
@@ -1466,7 +1466,24 @@ var auth = {
             vm.getData(getFacilityUrl,'POST',JSON.stringify(params), function(data){
                 console.log(data);
                 if(data.content){
-                    _this.AllFacilityList = data.content.list;
+                    _this.AllFacilityList = [];
+                    $.each(data.content.list,function(i){
+                        _this.AllFacilityList.push({
+                            id:data.content.list[i].id,
+                            name:data.content.list[i].name,
+                            type:data.content.list[i].type
+                        })
+                    })
+                    _this.AllFacilityList = _this.AllFacilityList.filter(function(val){
+                        var flag = true;
+                        $.each(_this.groupFacilityList,function(i){
+                            if(val.id == _this.groupFacilityList[i].id){
+                                flag = false;
+                            }
+                        })
+                        return flag;
+                    })
+                    //console.log('_this.AllFacilityList',_this.AllFacilityList);
                 }else{
                     console.log("no facility data");
                 }
@@ -1475,7 +1492,6 @@ var auth = {
             },true,true)
         },
         handleClose(tag) {
-            console.log('tag',tag);
             let _this = this;
             let thisfacilityId = (tag.id).toString();
 
@@ -1485,6 +1501,7 @@ var auth = {
                 console.log(data);
                 if(data.message == 'OK'){
                     _this.getThisFacilities(_this.groupId);
+                    _this.getAllFacilityList();
                 }else{
                     _this.$message.error("删除失败");
                 }
@@ -1493,32 +1510,21 @@ var auth = {
             },true,true)
         },
         addThisTag:function(tagId){
-            console.log('tagId',tagId);
             let _this = this;
-            let hasThisId = false;
-            let facilityids = [];
-            $.each(_this.groupFacilityList,function(i){
-                facilityids.push(_this.groupFacilityList[i].id);
-            })
-            if(facilityids.indexOf(tagId) !== -1){
-                _this.$message({
-                    message: '该设备已添加',
-                    type: 'warning'
-                });
-            }else{
-                let addGroupFacilityUrl = '/group/groupFacilities/'+ _this.groupId +'/'+tagId;
-                let params = {};
-                vm.getData(addGroupFacilityUrl,'POST',JSON.stringify(params), function(data){
-                    console.log(data);
-                    if(data.message == 'OK'){
-                        _this.getThisFacilities(_this.groupId);
-                    }else{
-                        _this.$message.error("添加失败");
-                    }
-                },function(err){
-                    console.log(err);
-                },true,true)
-            }
+            let addGroupFacilityUrl = '/group/groupFacilities/'+ _this.groupId +'/'+tagId;
+            let params = {};
+            vm.getData(addGroupFacilityUrl,'POST',JSON.stringify(params), function(data){
+                console.log(data);
+                if(data.message == 'OK'){
+                    _this.getThisFacilities(_this.groupId);
+                    _this.getAllFacilityList();
+
+                }else{
+                    _this.$message.error("添加失败");
+                }
+            },function(err){
+                console.log(err);
+            },true,true)
         }
      },
      mounted:function(){
@@ -1539,8 +1545,8 @@ var auth = {
                 }
 
                 let params = _this.$route.params.id;
-                _this.getAllFacilityList();
                 _this.getThisFacilities(parseInt(params));
+                _this.getAllFacilityList();
                 _this.groupId = parseInt(params);
             };
          })
