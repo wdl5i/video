@@ -10,9 +10,7 @@
 </head>
 <body>
     <div id="app">
-        
-            <router-view></router-view>
-        
+        <router-view></router-view>
     </div>
 
     <!-- 登录页模板 -->
@@ -97,7 +95,7 @@
 
                 <!-- 设备管理 -->
                 <el-menu :default-active="onRoutes" class="sidebar-el-menu" background-color="rgb(50, 65, 87)" :default-openeds="defaultOpeneds"
-                @open="openhandle" @close="closehandle" text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)" v-show="showSidebar == 'facility'" router>
+                @open="openhandle" @close="closehandle"  @select="selecthandle" text-color="#bfcbd9" active-text-color="rgba(84,92,100,0.9)" v-show="showSidebar == 'facility'">
                     <template v-for="facilityManageList in facilityManageList">
                         <template v-if="facilityManageList.subs">
                             <el-submenu :index="facilityManageList.index" :key="facilityManageList.index">
@@ -107,7 +105,7 @@
                                             {{ facilityManageList.name }}
                                     </span>
                                 </template>
-                                <el-menu-item v-for="(subItem,i) in facilityManageList.subs" :key="i" :index="subItem.index">
+                                <el-menu-item v-for="(subItem,i) in facilityManageList.subs" :key="i" :index="(subItem.id).toString()" @click="goToPath(subItem)">
                                     {{ subItem.name }}
                                 </el-menu-item>
                             </el-submenu>
@@ -293,11 +291,6 @@
                 <el-table :data="groupList" stripe border style="width: 100%" size="mini">
                     <el-table-column prop="name" label="设备组名称" width="150"></el-table-column>
                     <el-table-column prop="orderNum" label="序号"></el-table-column>
-                    <el-table-column prop="facilityId" label="关联设备" width="100" v-if="isGroupFacilityOption == true">
-                        <template slot-scope="scope">
-                            <el-button size="mini" type="primary" @click="getGroupFacilities(scope.row.id);dialogFacilityFormVisible = true">查看</el-button>
-                        </template>
-                    </el-table-column>
                     <el-table-column prop="option" label="操作" width="180">
                         <template slot-scope="scope">
                             <el-button type="primary" size="mini" @click="dialogFormVisible = true;groupUpdate(scope.row.id,scope.row);isGroupAdd = false" v-show="isGroupManageUpdateShow == true">修改</el-button>
@@ -326,12 +319,6 @@
                     <el-button v-show="isGroupAdd == true" type="primary" @click="groupAdd('groupInfo')">确 定</el-button>
                     <el-button v-show="isGroupAdd == false" type="primary" @click="groupComfirmUpdate('groupInfo')">确 定</el-button>
                 </span>
-            </el-dialog>
-            <!-- 设备查看对话框 -->
-            <el-dialog title="配置设备组" :visible.sync="dialogFacilityFormVisible" width="30%">
-                <el-checkbox-group v-model="checkFacilityList">
-                    <el-checkbox :key="index" name="facilityCheckbox" v-for="(facility,index) in FacilityList" :label="facility.id" @change="showThisfacilityId(facility.id)">{{facility.name}}</el-checkbox>
-                </el-checkbox-group>
             </el-dialog>
         </div>
     </template>

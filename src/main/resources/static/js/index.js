@@ -1,4 +1,5 @@
 /*  Created by huangx on 2018/4/18. */
+var bus = new Vue();
 
 /* 创建路由组件 */
 var Login = {
@@ -110,8 +111,12 @@ var Home = {
             return username ? username : this.userName;
         },
         onRoutes(){
-            console.log('path',this.$route.path);
-            return (this.$route.path.split('/'))[2];
+            // console.log('path',this.$route);
+            if(this.$route.params.id){
+                return (this.$route.params.id).toString();
+            }else{
+                return (this.$route.path.split('/'))[2];
+            }
         }
     },
     methods:{
@@ -123,8 +128,10 @@ var Home = {
             }
         },
         handleSelect(key, keyPath) {
-            console.log('keyPath',key, keyPath);
             this.activeIndex = key;  
+        },
+        selecthandle(key, keyPath) {
+            router.push({path:`/home/${key}`});
         },
         openhandle(key, keyPath){
             router.push({path:`/home/${key}`});
@@ -141,6 +148,12 @@ var Home = {
             this.showSidebar = 'facility';
             this.defaultIndex1 = 'groupManage';
             router.push({path:'/home/facilityManage'});
+        },
+        goToPath(pathobj){
+            router.push({path:'/home/'+pathobj.index});
+        },
+        dataChanged(){
+            console.log('dataChanged');
         },
         //获取设备组列表
         getGroupList:function(){
@@ -238,6 +251,11 @@ var Home = {
                     _this.activeIndex = routeMsg[i].parentIndex;
                     _this.showSidebar = routeMsg[i].Sidebar;
                 }
+            })
+
+            bus.$on('dataChanged',function(){
+                console.log('dataChanged');
+                _this.getGroupList();
             })
         })
     }
@@ -884,17 +902,13 @@ var groupManage = {
                 name:'',
                 orderNum:1
             },
-            FacilityList:[],
             dialogFormVisible: false,
-            dialogFacilityFormVisible:false,
             formLabelWidth: '120px',
             loading:true,
             isGroupAdd:true,
             isGroupManageAddShow:false,
             isGroupManageDelShow:false,
             isGroupManageUpdateShow:false,
-            isGroupFacilityOption:false,
-            checkFacilityList:[],
             currentPage:1,
             total:0,
             currentSize:10,
@@ -958,61 +972,8 @@ var groupManage = {
                 console.log(err);
             },true,true)
         },
-        getAllFacilityList:function(){
-            let _this = this;
-            let getFacilityUrl = '/facility/page/1/10000';
-            let params = {
-
-            };
-            vm.getData(getFacilityUrl,'POST',JSON.stringify(params), function(data){
-                console.log(data);
-                if(data.content){
-                    _this.FacilityList = data.content.list;
-                }else{
-                    console.log("no group data");
-                }
-            },function(err){
-                console.log(err);
-            },true,true)
-        },
-        getGroupFacilities:function(groupId){
-            let _this = this;
-            _this.currentGroupId = groupId;
-            let groupFacilityUrl = '/group/groupFacilities/'+groupId;
-            vm.getData(groupFacilityUrl,'GET','', function(data){
-                console.log(data);
-                _this.checkFacilityList = [];
-                if(data.message == 'OK' && data.content.length !== 0){
-                    $.each(data.content,function(k){
-                        _this.checkFacilityList.push(data.content[k].id);
-                    })
-                }
-            },function(err){
-                console.log(err);
-            },true,true)
-        },
-        showThisfacilityId:function(facilityId,ischecked){
-            let _this = this;
-            if($(".el-checkbox input[type='checkbox'][name='facilityCheckbox'][value='"+facilityId+"']").is(':checked') == true){
-                console.log('选中');
-                let addGroupFacilityUrl = '/group/groupFacilities/'+ _this.currentGroupId+'/'+facilityId;
-                let params = {};
-                vm.getData(addGroupFacilityUrl,'POST',JSON.stringify(params), function(data){
-                    console.log(data);
-                },function(err){
-                    console.log(err);
-                },true,true)
-            }else{
-                console.log('未选中');
-                let deleteGroupFacilityUrl = '/group/groupFacilities/'+ _this.currentGroupId+'/'+facilityId;
-                let params = {};
-                vm.getData(deleteGroupFacilityUrl,'DELETE',JSON.stringify(params), function(data){
-                    console.log(data);
-                },function(err){
-                    console.log(err);
-                },true,true)
-            }
-        },
+        
+    
         groupAdd:function(formName){
             let _this = this;
             _this.$refs[formName].validate((valid) => {
@@ -1032,8 +993,7 @@ var groupManage = {
                                 message: '设备组添加成功!'
                             });
                             _this.getGroupList(_this.currentPage,_this.currentSize);
-                            console.log('home',Home);
-                            // Home.methods.getGroupList();
+                            bus.$emit('dataChanged');
                         }else{
                             console.log('设备组添加失败');
                             _this.$message.error("设备组添加失败");
@@ -1073,6 +1033,7 @@ var groupManage = {
                                 message: '设备组修改成功!'
                             });
                             _this.getGroupList(_this.currentPage,_this.currentSize);
+                            bus.$emit('dataChanged');
                         }else{
                             console.log('设备组修改失败');
                             _this.$message.error("设备组修改失败");
@@ -1106,6 +1067,7 @@ var groupManage = {
                             message: '设备组删除成功!'
                         });
                         _this.getGroupList(_this.currentPage,_this.currentSize);
+                        bus.$emit('dataChanged');
                     }else{
                         console.log('设备组删除失败');
                         _this.$message.error("设备组删除失败");
@@ -1141,12 +1103,8 @@ var groupManage = {
                 if(menuAuth.indexOf('修改组') !== -1){
                     _this.isGroupManageUpdateShow = true;
                 }
-                if(menuAuth.indexOf('绑定设备组与设备') !== -1){
-                    _this.isGroupFacilityOption = true;
-                }
             };
             _this.getGroupList(_this.currentPage,_this.currentSize);
-            _this.getAllFacilityList();
         })
         
     }
@@ -1452,6 +1410,7 @@ var auth = {
             let groupFacilityUrl = '/group/groupFacilities/'+groupId;
             vm.getData(groupFacilityUrl,'GET','', function(data){
                 console.log(data);
+                _this.groupFacilityList = [];
                 if(data.message == 'OK' && data.content.length !== 0){
                     _this.groupFacilityList = data.content;
                 }
@@ -1543,13 +1502,21 @@ var auth = {
                 }else{
                     _this.currentUserId = userId;
                 }
-
                 let params = _this.$route.params.id;
                 _this.getThisFacilities(parseInt(params));
                 _this.getAllFacilityList();
                 _this.groupId = parseInt(params);
             };
          })
+     },
+     watch:{
+        '$route':function(){
+            let _this = this;
+            let params = _this.$route.params.id;
+            _this.getThisFacilities(parseInt(params));
+            _this.getAllFacilityList();
+            _this.groupId = parseInt(params);
+        }
      }
  }
 
