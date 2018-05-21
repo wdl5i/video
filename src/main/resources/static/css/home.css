@@ -366,21 +366,6 @@ video {
     left: -5px;
     top: -12px;
 }
-.facilityType1 {
-    background-image: url(../img/camera1.jpg);
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-.facilityType2 {
-    background-image: url(../img/camera2.jpg);
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-.facilityType3 {
-    background-image: url(../img/camera3.jpg);
-    background-repeat: no-repeat;
-    background-size: contain;
-}
 /* table */
 .el-table thead tr, .el-table thead tr th {
     background-color: #A4D3EE;
