@@ -676,8 +676,11 @@ var facilityManage = {
         optionChange(val){
             console.log(`选中了: ${val}`);
         },
-        goMonitor(){
+        goMonitor(serial){
             this.dialogMonitorVisible = true;
+            let xmWebRtc = new XmWebRtc();
+            let uuid = serial;
+            xmWebRtc.initWebSocketWebRtc(uuid, '123.59.27.192', 5701);
         },
         goFull(){
             this.isFull = false;
