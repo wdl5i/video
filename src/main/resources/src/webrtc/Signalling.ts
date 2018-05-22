@@ -125,7 +125,7 @@ export abstract class Signalling {
         var LoginData = {
             EncryptType: "NONE",
             LoginType: "DVRIP-Web",
-            PassWord: "123456",
+            PassWord: "1",
             UserName: "admin"
         };
         that.netip.sendOverNetIP(LoginData, 1000);
