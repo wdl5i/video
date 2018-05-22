@@ -70,8 +70,8 @@ window.XmWebRtc = class {
      * @param {number} port
      * @returns {WebSocketWebRtc}
      */
-    initWebSocketWebRtc(sn: string, ip: string, port: number) {
-        //TODO 待定实现
-        return new WebSocketWebRtc(sn, ip, port);
-    }
+    // initWebSocketWebRtc(sn: string, ip: string, port: number) {
+    //     //TODO 待定实现
+    //     return new WebSocketWebRtc(sn, ip, port);
+    // }
 }
