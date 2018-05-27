@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实时视频监控</title>
+    <script src="jquery.js"></script>
+    <script src="adapter.js"></script>
+    <script src="md5.min.js"></script>
+    <script src="XmWebRtc.js"></script>
+	<script type="text/javascript" src="vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="iview.css">
+    <script type="text/javascript" src="iview.js"></script>
+    <script>
+
+
+        var xmWebRtc = new XmWebRtc();
+
+        function websocketSearch() {
+            var uuid = $('#uuid').val();
+            xmWebRtc.initWebSocketWebRtc(uuid, '123.59.27.192', 5701);
+        }
+
+        function search() {
+            var uuid = $('#uuid').val();
+            var mode = $('#mode').val();
+            // uuid='1234567890abcdef'
+
+            var webrtc = xmWebRtc.initAjaxWebRtc(uuid, '123.59.27.192', 6613);
+
+            /*xmWebRtc.queryStatus({"uuid": uuid, "mode": mode}, function (data) {
+                var result = data.result;
+                if (result != null) {
+                    for (var _i = 0; _i < result.length; _i++) {
+                        $('#dev-status').html(result[_i].status)
+                        if (result[_i].status.toUpperCase() == 'ONLINE') {
+                            var params = result[_i].conn_params;
+                            var webrtc = new xmWebRtc.initAjaxWebRtc(uuid, params.ServerIP, params.ServerPort);
+                            webrtc.init();
+                        }
+                    }
+                } else {
+                    $('#dev-status').html('error')
+                }
+            }, function (XMLHttpRequest, textStatus, errorThrown) {
+                $('#dev-status').html('error:' + XMLHttpRequest.status)
+            });*/
+        }
+    </script>
+</head>
+<body style="background-color: #354359; color: #fff;">
+<!--label>序列号：
+    <select id="uuid">
+        <option value="89041ddb464dc22f">89041ddb464dc22f--webRtc</option>
+        <option value="09fade5a5424a555">09fade5a5424a555--webRtc</option>
+        <option value="1e25d676f41101d0">1e25d676f41101d0--webrtc</option>
+        <option value="1cf28f1902386876">1cf28f1902386876--webrtc</option>
+    </select>
+</label-->
+
+<!--label>模式：
+    <select id="mode">
+        <option value="rts">rts</option>
+        <option value="dss">dss</option>
+    </select>
+</label-->
+
+<!--a href="javascript:search()"> ajax查询</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:websocketSearch()">websocket查询</a-->
+<!--br/>
+在线状态：<span id="dev-status"></span>
+
+<video id="video" src="" width="654" height="480"  style="border:solid 1px black">
+
+</video-->
+<div id="app">
+    <Row style="margin: 15px 0">
+      <i-col span="5" offset="1">
+		<i-menu theme="dark" @on-select="playIt">
+        <menu-group title="设备列表">
+            <menu-item v-for="(device,index) in devices" :key="index" :name="index">
+                <Icon type="ios-videocam-outline"></Icon>
+                {{ device.label }}
+            </menu-item>
+        </menu-group>
+		</i-menu>
+      </i-col>
+
+      <i-col span="18">
+		<video id="video" width="654" height="480" autoplay style="border:solid 1px red; background-color:black; object-fit:fill;">
+		</video>
+	  </i-col>
+	</Row>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            devices: [
+				{serial: "0074022fc183de7e", label: "0074022fc183de7e"},
+				{serial: "1e25d676f41102d9", label: "1e25d676f41102d9"},
+			]
+        },
+        methods: {
+            playIt: function(name) {
+                console.log(this.devices[name].serial);
+				var uuid = this.devices[name].serial;
+				xmWebRtc.initWebSocketWebRtc(uuid, '123.59.27.192', 5701);
+            }
+        }
+    })
+</script>
+</body>
+</html>
