@@ -1405,9 +1405,37 @@ var auth = {
             groupId:null,
             groupFacilityList:[],
             AllFacilityList:[],
+            activeName:'facilityBelong',
+            tabs:[
+                {
+                    title:'所属设备',
+                    id:'facilityBelong'
+                },
+                {
+                    title:'设备分组',
+                    id:'facilityMan'
+                }
+            ],
+            currentPage:1,
+            currentSize:10,
+            total:0,
          }
      },
      methods:{
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
+            this.currentSize = val;
+            this.getFacilityList(this.currentPage,val);
+        },
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+            this.currentPage = val;
+            this.getFacilityList(val,this.currentSize);
+        },
+        handleClick(tab, event) {
+            //console.log(tab, event);
+            router.push({path:`/home/${tab.name}`});
+        },
         getThisFacilities:function(groupId){
             let _this = this;
             let groupFacilityUrl = '/group/groupFacilities/'+groupId;
@@ -1436,16 +1464,18 @@ var auth = {
                             type:data.content.list[i].type
                         })
                     })
-                    _this.AllFacilityList = _this.AllFacilityList.filter(function(val){
-                        var flag = true;
-                        $.each(_this.groupFacilityList,function(i){
-                            if(val.id == _this.groupFacilityList[i].id){
-                                flag = false;
-                            }
+                    setTimeout(function(){
+                        _this.AllFacilityList = _this.AllFacilityList.filter(function(val){
+                            var flag = true;
+                            $.each(_this.groupFacilityList,function(i){
+                                if(val.id == _this.groupFacilityList[i].id){
+                                    flag = false;
+                                }
+                            })
+                            return flag;
                         })
-                        return flag;
-                    })
-                    //console.log('_this.AllFacilityList',_this.AllFacilityList);
+                    },10)
+                    // console.log('_this.AllFacilityList',_this.AllFacilityList);
                 }else{
                     console.log("no facility data");
                 }

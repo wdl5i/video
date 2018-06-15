@@ -92,7 +92,7 @@ a,a:hover,a:focus {
 	line-height: 46px;
 }
 .text > input {
-	width: 220px;
+	width: 280px;
 	height: 46px;
 	outline: none;
 	display: inline-block;
@@ -129,7 +129,7 @@ input:-webkit-autofill {
 	display: block;
 }
 .act-but{
-    width: 400px;
+    width: 100%;
 	line-height: 20px;
 	text-align: center;
 	font-size: 20px;
@@ -217,6 +217,11 @@ li[role='menuitem'] > a {
 .content-box .el-tabs__content {
     display: none;
 }
+
+.groupFacility .el-tabs__content {
+    display: block!important;
+}
+
 .container {
     padding: 30px;
     background: #fff;
@@ -227,6 +232,11 @@ li[role='menuitem'] > a {
     border-bottom-left-radius: 5px;
     border-top: none;
 }
+
+.el-tab-pane > .container {
+    border: none!important;
+}
+
 .crumbs {
     margin-bottom: 20px;
 }

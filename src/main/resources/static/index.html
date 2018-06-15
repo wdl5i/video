@@ -203,6 +203,7 @@
                     
                 </el-tab-pane>
             </el-tabs>
+
             <div class="container">
                 <div class="handle-box">
                     <el-button type="primary" size="small" plain icon="delete" @click="dialogFormVisible = true;isFacilityAdd = true" v-show="isFacilityManageAddShow == true">添加设备</el-button>
@@ -357,26 +358,56 @@
 
     <!-- 设备组下设备模板 -->
     <template id="groupFacility">
-            <div class="mainContainer content">
+            <div class="mainContainer content groupFacility">
+                <el-tabs v-model="activeName" type="border-card">
+                    
+                    <el-tab-pane label="所属设备" name='facilityBelong' key='facilityBelong'>
+                        <template v-if="activeName === 'facilityBelong'">
+                            <div class="container">
+                                <el-table :data="groupFacilityList" stripe border style="width: 100%" size="mini">
+                                    <el-table-column prop="name" label="设备名称" width="150"></el-table-column>
+                                    <el-table-column prop="userName" label="设备用户" width="150"></el-table-column>
+                                    <el-table-column prop="password" label="设备密码" width="100"></el-table-column>
+                                
+                                    <el-table-column prop="orderNum" label="序号" width="100"></el-table-column>
+                                    <el-table-column prop="serial" label="Serial"></el-table-column>
+                                </el-table>
+                                <div class="pagination">
+                                    <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+                                    layout="total, sizes, prev, pager, next" :total="total" :page-size="currentSize"
+                                    :current-page="currentPage" :page-sizes="[10, 20, 50, 100]"></el-pagination>
+                                </div>
+                            </div>
+                        </template>
+                    </el-tab-pane>
+                    <el-tab-pane label="配置管理"  name='facilityMan'  key='facilityMan'>
+                        <template v-if="activeName === 'facilityMan'">
+                            <div class="container">
+                                <div class="checkPanel">
+                                    <p class="panelTitle">已选设备</p>
+                                    <div class="panelTag checkTag">
+                                            <el-tag v-for="tag in groupFacilityList" :key="tag.id" closable @close="handleClose(tag)">
+                                                {{tag.name}}
+                                            </el-tag>
+                                    </div>
+                                </div>
+                                <div class="allPanel">
+                                    <p class="panelTitle">待选设备</p>
+                                    <div class="panelTag allTag">
+                                        <span class="el-tag" v-for="tag in AllFacilityList" :key="tag.id" @click="addThisTag(tag.id)" title="添加">
+                                            {{tag.name}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    
+                    </el-tab-pane>
+                    
+                </el-tabs>
                 
-                <div class="container">
-                   <div class="checkPanel">
-                       <p class="panelTitle">已选设备</p>
-                       <div class="panelTag checkTag">
-                            <el-tag v-for="tag in groupFacilityList" :key="tag.id" closable @close="handleClose(tag)">
-                                {{tag.name}}
-                            </el-tag>
-                       </div>
-                   </div>
-                   <div class="allPanel">
-                        <p class="panelTitle">待选设备</p>
-                        <div class="panelTag allTag">
-                            <span class="el-tag" v-for="tag in AllFacilityList" :key="tag.id" @click="addThisTag(tag.id)" title="添加">
-                                {{tag.name}}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                
+                
             </div>
         </template>
 
